@@ -4,6 +4,10 @@
 #include <utility>
 #include <vector>
 
+/****************
+*   SOLUTION   *
+****************/
+
 class Widget {
 public:
 	virtual ~Widget() = default;

@@ -5,6 +5,10 @@
 #include <utility>
 #include <vector>
 
+/****************
+*   SOLUTION   *
+****************/
+
 struct Event {
 	std::string topic;
 	int severity;

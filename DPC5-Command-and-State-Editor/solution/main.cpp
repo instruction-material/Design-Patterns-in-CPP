@@ -4,6 +4,10 @@
 #include <utility>
 #include <vector>
 
+/****************
+*   SOLUTION   *
+****************/
+
 class Document {
 public:
 	void append(const std::string& text) { content_ += text; }

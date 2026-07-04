@@ -5,6 +5,10 @@
 #include <string>
 #include <utility>
 
+/****************
+*   SOLUTION   *
+****************/
+
 struct Order {
 	std::string tier;
 	int daysEarly;

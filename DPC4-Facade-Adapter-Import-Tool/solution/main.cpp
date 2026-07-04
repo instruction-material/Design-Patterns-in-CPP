@@ -4,6 +4,10 @@
 #include <utility>
 #include <vector>
 
+/****************
+*   SOLUTION   *
+****************/
+
 struct ImportRecord {
 	std::string label;
 	std::string category;

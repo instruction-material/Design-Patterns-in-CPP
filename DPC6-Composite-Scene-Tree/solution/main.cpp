@@ -4,6 +4,10 @@
 #include <utility>
 #include <vector>
 
+/****************
+*   SOLUTION   *
+****************/
+
 class SceneNode {
 public:
 	virtual ~SceneNode() = default;

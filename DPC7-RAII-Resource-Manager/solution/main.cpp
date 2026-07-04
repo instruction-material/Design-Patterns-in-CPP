@@ -6,6 +6,10 @@
 #include <utility>
 #include <vector>
 
+/****************
+*   SOLUTION   *
+****************/
+
 int acquireHandle(const std::string& label) {
 	static int nextHandle = 1;
 	const int handle = nextHandle++;
