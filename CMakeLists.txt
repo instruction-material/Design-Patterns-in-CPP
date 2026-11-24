@@ -87,3 +87,9 @@ add_dpc_lab(
 	dpc8_legacy_refactor_capstone_solution
 	"DPC8-Legacy-Refactor-Capstone/solution/main.cpp"
 )
+
+include(CTest)
+if(BUILD_TESTING)
+    add_dpc_lab(dpc_dashboard_family_check "tests/dashboard_family.cpp")
+    add_test(NAME dashboard_uses_selected_product_family COMMAND dpc_dashboard_family_check)
+endif()

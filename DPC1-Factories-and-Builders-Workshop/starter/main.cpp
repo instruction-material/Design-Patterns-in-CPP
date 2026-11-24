@@ -108,6 +108,6 @@ int main() {
 
     std::cout << "Starter dashboard\n";
     builder.render(std::cout);
-    std::cout << "\nTODO: add a second factory family or a richer builder step "
-                 "when the UI must vary by environment.\n";
+    std::cout << "\nTODO: move widget construction into the theme factories "
+                 "and assemble both themes with the same builder.\n";
 }

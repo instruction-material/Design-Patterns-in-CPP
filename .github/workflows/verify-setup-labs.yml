@@ -9,6 +9,9 @@ on:
       - 'DPC-19-dpc9-*/**'
       - 'DPC-20-dpc9-*/**'
       - 'tests/test_injected_services.py'
+      - 'DPC1-Factories-and-Builders-Workshop/**'
+      - 'tests/dashboard_family.cpp'
+      - 'CMakeLists.txt'
       - 'tests/test_setup_labs.py'
       - '.github/workflows/verify-setup-labs.yml'
   workflow_dispatch:
@@ -26,3 +29,8 @@ jobs:
         run: python3 tests/test_setup_labs.py
       - name: Verify three dependency injection starters and references
         run: python3 tests/test_injected_services.py
+      - name: Build course demos and check an independent dashboard family
+        run: |
+          cmake -S . -B build -DCMAKE_CXX_FLAGS=-Werror
+          cmake --build build --parallel 2
+          ctest --test-dir build --output-on-failure
