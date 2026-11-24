@@ -1,78 +1,42 @@
-#include <cctype>
 #include <iostream>
-#include <memory>
-#include <string>
 
-/*****************
-*   CONSTANTS   *
-*****************/
-
-const std::string SAMPLE_TEXT = "design patterns";
-
-/*************
-*   TYPES   *
-*************/
-
-// Define the formatting strategy interface
-class Formatter {
-  public:
-    virtual ~Formatter() = default;
-
-    /**
-	 * @brief Format the provided input string
-	 *
-	 * @param input Text to format
-	 *
-	 * @return Formatted text
-	 */
-    virtual std::string format(const std::string& input) const = 0;
+class Clock {
+public:
+    virtual ~Clock() = default;
+    virtual int minute() const = 0;
 };
 
-// Format text by capitalizing the first letter of each word
-class TitleFormatter : public Formatter {
-  public:
-    /**
-	 * @brief Convert input text to title case
-	 *
-	 * @param input Text to format
-	 *
-	 * @return Title-cased text
-	 */
-    std::string format(const std::string& input) const override {
-        std::string output = input;
-        bool should_uppercase_next_letter = true;
-
-        // Visit each character so word starts can be capitalized in place
-        for (char& character : output) {
-            // Spaces make the next non-space character start a new word
-            if (std::isspace(static_cast<unsigned char>(character))) {
-                should_uppercase_next_letter = true;
-                continue;
-            }
-
-            // Capitalize the first character after a word boundary
-            if (should_uppercase_next_letter) {
-                character = static_cast<char>(
-                    std::toupper(static_cast<unsigned char>(character)));
-                should_uppercase_next_letter = false;
-            }
-        }
-
-        return output;
-    }
+class ManualClock final : public Clock {
+public:
+    explicit ManualClock(int initial) : value(initial) {}
+    int minute() const override { return value; }
+    void advance() { ++value; }
+private:
+    int value;
 };
 
-/*****************
-*   FUNCTIONS   *
-*****************/
+class Reservation {
+public:
+    Reservation(const Clock& clock, int deadline) : clock_(clock), deadline_(deadline) {}
+    bool expired() const { return clock_.minute() >= deadline_; }
+private:
+    const Clock& clock_;
+    int deadline_;
+};
 
-/**
- * @brief Print a title-formatted sample phrase
- *
- * @return Program exit status
- */
+bool check(const char* label, int actual, int expected) {
+    std::cout << label << ": observed " << actual << ", expected " << expected << '\n';
+    return actual == expected;
+}
+
 int main() {
-    std::unique_ptr<Formatter> formatter = std::make_unique<TitleFormatter>();
-    std::cout << formatter->format(SAMPLE_TEXT) << "\n";
-    return 0;
+    ManualClock local(9), remote(8);
+    Reservation hold(local, 10), other(remote, 10);
+    bool ok = check("before deadline", hold.expired(), false);
+    local.advance();
+    ok &= check("at deadline", hold.expired(), true);
+    ok &= check("separate clock", other.expired(), false);
+    local.advance();
+    ok &= check("after deadline", hold.expired(), true);
+    return ok ? 0 : 1;
 }

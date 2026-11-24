@@ -1,14 +1,5 @@
-# DPC9 Singleton, Global State, and Dependency Injection supplemental 3
+# Route export receipts to an owned stream
 
-Course: Design Patterns in C++
-Module: DPC9 Singleton, Global State, and Dependency Injection supplemental 3
+An exporter writes a receipt for each saved file. Two exports may need separate destinations. Remove the process-wide receipt stream. Borrow the output stream passed into Exporter and direct each receipt to its owner, preserving its spelling, newline and order.
 
-Use the starter folder first. The starter is intentionally incomplete, and the solution shows one clean way to finish the same build after the student has worked through it.
-
-Suggested flow:
-- Read the module brief and identify the core requirement.
-- Complete the TODO markers in the starter implementation.
-- Test at least one custom case beyond the default example.
-- Compare against the solution only after the student has a working draft.
-
-Quick run hint: `c++ -std=c++17 main.cpp -o app && ./app`
+Open the starter folder for the instructions and checks. The solution folder contains a working implementation.

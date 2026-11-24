@@ -1,14 +1,5 @@
-# DPC9 Singleton, Global State, and Dependency Injection supplemental 2
+# Reservation expiry with a replaceable clock
 
-Course: Design Patterns in C++
-Module: DPC9 Singleton, Global State, and Dependency Injection supplemental 2
+A seat reservation expires at its deadline. Change Reservation to read the borrowed Clock on each call. Replace the fixed legacy time source and make each reservation follow its own clock. Use integer minutes and treat the deadline itself as expired.
 
-Use the starter folder first. The starter is intentionally incomplete, and the solution shows one clean way to finish the same build after the student has worked through it.
-
-Suggested flow:
-- Read the module brief and identify the core requirement.
-- Complete the TODO markers in the starter implementation.
-- Test at least one custom case beyond the default example.
-- Compare against the solution only after the student has a working draft.
-
-Quick run hint: `c++ -std=c++17 main.cpp -o app && ./app`
+Open the starter folder for the instructions and checks. The solution folder contains a working implementation.

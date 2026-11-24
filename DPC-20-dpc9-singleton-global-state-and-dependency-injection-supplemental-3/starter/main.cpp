@@ -1,22 +1,33 @@
 #include <iostream>
-#include <memory>
+#include <sstream>
 #include <string>
 
-class Formatter {
-  public:
-    virtual ~Formatter() = default;
-    virtual std::string format(const std::string& input) const = 0;
+
+
+std::ostream& globalReceipts() { return std::cout; }
+
+class Exporter {
+public:
+    // TODO: keep the caller's destination and use it for every receipt.
+    explicit Exporter(std::ostream&) {}
+    void save(const std::string& name) { globalReceipts() << "saved " << name << '\n'; }
 };
 
-class TitleFormatter : public Formatter {
-  public:
-    std::string format(const std::string& input) const override {
-        // TODO: return a transformed representation.
-        return input;
-    }
-};
+bool check(const char* label, const std::string& actual, const std::string& expected) {
+    std::cout << label << ": observed [" << actual << "], expected [" << expected << "]\n";
+    return actual == expected;
+}
 
 int main() {
-    std::unique_ptr<Formatter> formatter = std::make_unique<TitleFormatter>();
-    std::cout << formatter->format("design patterns") << "\n";
+    std::ostringstream reports, images;
+    Exporter report(reports);
+    {
+        Exporter image(images);
+        report.save("notes.txt");
+        image.save("map.png");
+    }
+    report.save("index.csv");
+    bool ok = check("report order", reports.str(), "saved notes.txt\nsaved index.csv\n");
+    ok &= check("image isolation", images.str(), "saved map.png\n");
+    return ok ? 0 : 1;
 }
