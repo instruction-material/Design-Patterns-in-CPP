@@ -13,6 +13,8 @@ on:
       - 'tests/test_injected_services.py'
       - 'DPC1-Factories-and-Builders-Workshop/**'
       - 'tests/dashboard_family.cpp'
+      - 'DPC7-RAII-Resource-Manager/**'
+      - 'tests/scope_exit.cpp'
       - 'CMakeLists.txt'
       - 'tests/test_setup_labs.py'
       - '.github/workflows/verify-setup-labs.yml'

@@ -1,4 +1,4 @@
-#include <functional>
+#include "scope_exit.hpp"
 #include <iostream>
 #include <memory>
 #include <string>
@@ -20,21 +20,6 @@ int acquireHandle(const std::string& label) {
 void releaseHandle(int handle, const std::string& label) {
     std::cout << "release " << label << " -> " << handle << '\n';
 }
-
-class ScopeExit {
-  public:
-    explicit ScopeExit(std::function<void()> action)
-        : action_(std::move(action)) {
-    }
-    ~ScopeExit() {
-        if (action_) {
-            action_();
-        }
-    }
-
-  private:
-    std::function<void()> action_;
-};
 
 class TextureHandle {
   public:
