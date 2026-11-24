@@ -17,6 +17,9 @@ on:
       - 'DPC-15-dpc7-command-and-state-supplemental-2/**'
       - 'DPC-16-dpc7-command-and-state-supplemental-3/**'
       - 'tests/test_command_practice.py'
+      - 'DPC3-Observer-Event-Hub/**'
+      - 'DPC4-Facade-Adapter-Import-Tool/**'
+      - 'tests/test_event_and_import.py'
       - 'tests/test_import_capstone.py'
       - 'DPC1-Factories-and-Builders-Workshop/**'
       - 'tests/dashboard_family.cpp'
@@ -36,6 +39,12 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - name: Install the JSON adapter build dependency
+        run: |
+          if ! pkg-config --atleast-version=0.15 json-c; then
+            sudo apt-get update
+            sudo apt-get install -y pkg-config libjson-c-dev
+          fi
       - name: Build the starter, completed exercise and reference for each lab
         run: python3 tests/test_setup_labs.py
       - name: Verify creation and dependency injection starters and references
@@ -49,3 +58,5 @@ jobs:
         run: python3 tests/test_import_capstone.py
       - name: Exercise parsed editor commands and redo history
         run: python3 tests/test_command_practice.py
+      - name: Check event delivery and equivalent import records
+        run: python3 tests/test_event_and_import.py

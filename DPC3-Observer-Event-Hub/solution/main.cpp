@@ -69,7 +69,9 @@ class EventHub {
 
     void publish(const Event& event) {
         cleanupExpired();
-        for (const auto& slot : listeners_) {
+        // Subscriptions added by a callback start with the next publication.
+        const auto subscribers = listeners_;
+        for (const auto& slot : subscribers) {
             if (const auto listener = slot.lock()) {
                 listener->onEvent(event);
             }

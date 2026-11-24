@@ -1,0 +1,7 @@
+cmake_minimum_required(VERSION 3.20)
+project(record_import LANGUAGES CXX)
+add_executable(import_records main.cpp)
+target_compile_features(import_records PRIVATE cxx_std_20)
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(JSON_C REQUIRED IMPORTED_TARGET json-c>=0.15)
+target_link_libraries(import_records PRIVATE PkgConfig::JSON_C)

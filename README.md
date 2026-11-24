@@ -32,6 +32,8 @@ Expected local toolchain:
 - `clang++` or `g++`
 - `cmake`
 - `lldb` or `gdb`
+- `pkg-config` and json-c 0.15+ for the JSON Lines adapter in the full build
+  (macOS: `brew install pkgconf json-c`; Debian/Ubuntu: `sudo apt install pkg-config libjson-c-dev`)
 
 The projects standardize on a simple CMake layout so students can work in
 multi-file C++ instead of one-off snippets. Modern ownership and lifetime

@@ -93,6 +93,10 @@ add_dpc_lab(dpc_command_scanner_solution "DPC-15-dpc7-command-and-state-suppleme
 add_dpc_lab(dpc_command_redo_starter "DPC-16-dpc7-command-and-state-supplemental-3/starter/main.cpp")
 add_dpc_lab(dpc_command_redo_solution "DPC-16-dpc7-command-and-state-supplemental-3/solution/main.cpp")
 
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(JSON_C REQUIRED IMPORTED_TARGET json-c>=0.15)
+target_link_libraries(dpc4_facade_adapter_solution PRIVATE PkgConfig::JSON_C)
+
 include(CTest)
 if(BUILD_TESTING)
     add_dpc_lab(dpc_dashboard_family_check "tests/dashboard_family.cpp")

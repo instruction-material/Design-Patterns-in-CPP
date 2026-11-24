@@ -1,6 +1,9 @@
+#include <charconv>
+#include <stdexcept>
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <utility>
 #include <vector>
 
 struct LegacyRecord {
@@ -25,14 +28,22 @@ class LegacyCsvLoader {
                 continue;
             }
 
+            if (line.back() == '\r') line.pop_back();
+            if (line.empty()) continue;
             std::istringstream row(line);
-            std::string name;
-            std::string type;
-            std::string quantityText;
-            std::getline(row, name, ',');
-            std::getline(row, type, ',');
-            std::getline(row, quantityText, ',');
-            rows.push_back({name, type, std::stoi(quantityText)});
+            std::string name, type, quantityText;
+            if (!std::getline(row, name, ',') || name.empty() ||
+                !std::getline(row, type, ',') || type.empty() ||
+                !std::getline(row, quantityText)) {
+                throw std::invalid_argument("Expected label,category,quantity");
+            }
+            int quantity = 0;
+            const char* end = quantityText.data() + quantityText.size();
+            const auto parsed = std::from_chars(quantityText.data(), end, quantity);
+            if (parsed.ec != std::errc{} || parsed.ptr != end || quantity < 0) {
+                throw std::invalid_argument("Expected a nonnegative integer quantity");
+            }
+            rows.push_back({name, type, quantity});
         }
         return rows;
     }
