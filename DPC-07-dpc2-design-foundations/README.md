@@ -1,14 +1,5 @@
-# DPC2 Design Foundations
+# A shipping quote without object slicing
 
-Course: Design Patterns in C++
-Module: DPC2 Design Foundations
+A quote uses one of several shipping policies chosen at runtime. The starter copies the selected policy into a base object. Trace how that copy loses the derived behavior. Preserve dynamic dispatch and the caller-owned lifetime without allocating or copying a policy inside quote.
 
-Use the starter folder first. The starter is intentionally incomplete, and the solution shows one clean way to finish the same build after the student has worked through it.
-
-Suggested flow:
-- Read the module brief and identify the core requirement.
-- Complete the TODO markers in the starter implementation.
-- Test at least one custom case beyond the default example.
-- Compare against the solution only after the student has a working draft.
-
-Quick run hint: `c++ -std=c++17 main.cpp -o app && ./app`
+Start in the starter folder and read its checks. The solution folder contains a working reference.

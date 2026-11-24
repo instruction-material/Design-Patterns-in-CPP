@@ -1,14 +1,5 @@
-# DPC1 Why Patterns Look Different in Modern C++
+# Independent scene presets
 
-Course: Design Patterns in C++
-Module: DPC1 Why Patterns Look Different in Modern C++
+A scene preset stores an exposure setting and an ordered list of effect names. Copying a preset creates an independently editable variant. Preserve the public interface and default copy operations. Select storage that owns each value without shared mutable state or manual cleanup.
 
-Use the starter folder first. The starter is intentionally incomplete, and the solution shows one clean way to finish the same build after the student has worked through it.
-
-Suggested flow:
-- Read the module brief and identify the core requirement.
-- Complete the TODO markers in the starter implementation.
-- Test at least one custom case beyond the default example.
-- Compare against the solution only after the student has a working draft.
-
-Quick run hint: `c++ -std=c++17 main.cpp -o app && ./app`
+Start in the starter folder and read its checks. The solution folder contains a working reference.

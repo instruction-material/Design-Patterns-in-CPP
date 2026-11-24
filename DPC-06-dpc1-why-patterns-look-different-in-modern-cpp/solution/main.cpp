@@ -1,78 +1,39 @@
-#include <cctype>
 #include <iostream>
-#include <memory>
 #include <string>
+#include <vector>
 
-/*****************
-*   CONSTANTS   *
-*****************/
-
-const std::string SAMPLE_TEXT = "design patterns";
-
-/*************
-*   TYPES   *
-*************/
-
-// Define the formatting strategy interface
-class Formatter {
-  public:
-    virtual ~Formatter() = default;
-
-    /**
-	 * @brief Format the provided input string
-	 *
-	 * @param input Text to format
-	 *
-	 * @return Formatted text
-	 */
-    virtual std::string format(const std::string& input) const = 0;
+struct Settings {
+    int exposure = 1;
+    std::vector<std::string> effects;
 };
 
-// Format text by capitalizing the first letter of each word
-class TitleFormatter : public Formatter {
-  public:
-    /**
-	 * @brief Convert input text to title case
-	 *
-	 * @param input Text to format
-	 *
-	 * @return Title-cased text
-	 */
-    std::string format(const std::string& input) const override {
-        std::string output = input;
-        bool should_uppercase_next_letter = true;
-
-        // Visit each character so word starts can be capitalized in place
-        for (char& character : output) {
-            // Spaces make the next non-space character start a new word
-            if (std::isspace(static_cast<unsigned char>(character))) {
-                should_uppercase_next_letter = true;
-                continue;
-            }
-
-            // Capitalize the first character after a word boundary
-            if (should_uppercase_next_letter) {
-                character = static_cast<char>(
-                    std::toupper(static_cast<unsigned char>(character)));
-                should_uppercase_next_letter = false;
-            }
-        }
-
-        return output;
-    }
+class Preset {
+public:
+    void setExposure(int value) { settings_.exposure = value; }
+    int exposure() const { return settings_.exposure; }
+    void addEffect(const std::string& effect) { settings_.effects.push_back(effect); }
+    const std::vector<std::string>& effects() const { return settings_.effects; }
+private:
+    Settings settings_;
 };
 
-/*****************
-*   FUNCTIONS   *
-*****************/
-
-/**
- * @brief Print a title-formatted sample phrase
- *
- * @return Program exit status
- */
+bool check(const char* label, bool observed) {
+    std::cout << label << ": observed " << (observed ? "pass" : "fail") << ", expected pass" << '\n';
+    return observed;
+}
 int main() {
-    std::unique_ptr<Formatter> formatter = std::make_unique<TitleFormatter>();
-    std::cout << formatter->format(SAMPLE_TEXT) << "\n";
-    return 0;
+    Preset base;
+    base.addEffect("grain");
+    Preset night = base;
+    night.setExposure(3);
+    night.addEffect("blue");
+    bool ok = check("original exposure", base.exposure() == 1);
+    ok &= check("original effects", base.effects() == std::vector<std::string>{"grain"});
+    ok &= check("variant", night.exposure() == 3 &&
+                night.effects() == std::vector<std::string>{"grain", "blue"});
+    Preset copy;
+    copy = night;
+    night.addEffect("glow");
+    ok &= check("copy assignment", copy.effects().size() == 2);
+    return ok ? 0 : 1;
 }

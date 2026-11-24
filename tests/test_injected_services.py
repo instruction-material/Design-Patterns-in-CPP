@@ -8,6 +8,8 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
 LABS = {
+    "DPC-06-dpc1-why-patterns*": ("original exposure", "copy assignment"),
+    "DPC-07-dpc2-design-foundations": ("express two", "express one"),
     "DPC-07-dpc3-*": ("international", "multiword city"),
     "DPC-08-dpc3-*": ("configured", "zero capacity"),
     "DPC-08-dpc9-*": ("south starts fresh", "intake resumes"),

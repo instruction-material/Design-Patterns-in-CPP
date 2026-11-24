@@ -1,78 +1,31 @@
-#include <cctype>
 #include <iostream>
-#include <memory>
-#include <string>
 
-/*****************
-*   CONSTANTS   *
-*****************/
-
-const std::string SAMPLE_TEXT = "design patterns";
-
-/*************
-*   TYPES   *
-*************/
-
-// Define the formatting strategy interface
-class Formatter {
-  public:
-    virtual ~Formatter() = default;
-
-    /**
-	 * @brief Format the provided input string
-	 *
-	 * @param input Text to format
-	 *
-	 * @return Formatted text
-	 */
-    virtual std::string format(const std::string& input) const = 0;
+class Rate {
+public:
+    virtual ~Rate() = default;
+    virtual int cents(int parcels) const { return 100 * parcels; }
 };
 
-// Format text by capitalizing the first letter of each word
-class TitleFormatter : public Formatter {
-  public:
-    /**
-	 * @brief Convert input text to title case
-	 *
-	 * @param input Text to format
-	 *
-	 * @return Title-cased text
-	 */
-    std::string format(const std::string& input) const override {
-        std::string output = input;
-        bool should_uppercase_next_letter = true;
-
-        // Visit each character so word starts can be capitalized in place
-        for (char& character : output) {
-            // Spaces make the next non-space character start a new word
-            if (std::isspace(static_cast<unsigned char>(character))) {
-                should_uppercase_next_letter = true;
-                continue;
-            }
-
-            // Capitalize the first character after a word boundary
-            if (should_uppercase_next_letter) {
-                character = static_cast<char>(
-                    std::toupper(static_cast<unsigned char>(character)));
-                should_uppercase_next_letter = false;
-            }
-        }
-
-        return output;
-    }
+class Express final : public Rate {
+public:
+    int cents(int parcels) const override { return parcels > 0 ? 200 * parcels + 75 : 0; }
 };
 
-/*****************
-*   FUNCTIONS   *
-*****************/
+int quote(const Rate& selected, int parcels) {
+    return selected.cents(parcels);
+}
 
-/**
- * @brief Print a title-formatted sample phrase
- *
- * @return Program exit status
- */
+bool check(const char* label, int actual, int expected) {
+    std::cout << label << ": observed " << actual << ", expected " << expected << '\n';
+    return actual == expected;
+}
 int main() {
-    std::unique_ptr<Formatter> formatter = std::make_unique<TitleFormatter>();
-    std::cout << formatter->format(SAMPLE_TEXT) << "\n";
-    return 0;
+    Rate standard;
+    Express express;
+    const Rate& selected = express;
+    bool ok = check("standard two", quote(standard, 2), 200);
+    ok &= check("express two", quote(selected, 2), 475);
+    ok &= check("express one", quote(selected, 1), 275);
+    ok &= check("empty shipment", quote(selected, 0), 0);
+    return ok ? 0 : 1;
 }
