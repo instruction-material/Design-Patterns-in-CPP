@@ -1,14 +1,3 @@
-# DPC12 Capstone Studio
+# Asset inventory import capstone
 
-Course: Design Patterns in C++
-Module: DPC12 Capstone Studio
-
-Use the starter folder first. The starter is intentionally incomplete, and the solution shows one clean way to finish the same build after the student has worked through it.
-
-Suggested flow:
-- Read the module brief and identify the core requirement.
-- Complete the TODO markers in the starter implementation.
-- Test at least one custom case beyond the default example.
-- Compare against the solution only after the student has a working draft.
-
-Quick run hint: `c++ -std=c++17 main.cpp -o app && ./app`
+Start in the starter folder. The role-specific README contains the input grammar, example, build commands, tests, project stages and handoff requirements.

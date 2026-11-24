@@ -13,6 +13,8 @@ on:
       - 'DPC-19-dpc9-*/**'
       - 'DPC-20-dpc9-*/**'
       - 'tests/test_injected_services.py'
+      - 'DPC-09-dpc12-capstone-studio/**'
+      - 'tests/test_import_capstone.py'
       - 'DPC1-Factories-and-Builders-Workshop/**'
       - 'tests/dashboard_family.cpp'
       - 'DPC7-RAII-Resource-Manager/**'
@@ -40,3 +42,5 @@ jobs:
           cmake -S . -B build -DCMAKE_CXX_FLAGS=-Werror
           cmake --build build --parallel 2
           ctest --test-dir build --output-on-failure
+      - name: Verify the capstone baseline, reference and completed starter
+        run: python3 tests/test_import_capstone.py

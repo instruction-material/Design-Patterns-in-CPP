@@ -1,22 +1,18 @@
+#include "importer.hpp"
+
 #include <iostream>
-#include <memory>
-#include <string>
+#include <string_view>
 
-class Formatter {
-  public:
-    virtual ~Formatter() = default;
-    virtual std::string format(const std::string& input) const = 0;
-};
-
-class TitleFormatter : public Formatter {
-  public:
-    std::string format(const std::string& input) const override {
-        // TODO: return a transformed representation.
-        return input;
+int main(int argc, char* argv[]) {
+    if (argc != 2 || (std::string_view(argv[1]) != "space" && std::string_view(argv[1]) != "comma")) {
+        std::cerr << "Usage: asset_import space|comma\n";
+        return 2;
     }
-};
-
-int main() {
-    std::unique_ptr<Formatter> formatter = std::make_unique<TitleFormatter>();
-    std::cout << formatter->format("design patterns") << "\n";
+    Inventory inventory;
+    const Format format = std::string_view(argv[1]) == "space" ? Format::space : Format::comma;
+    if (!inventory.import(std::cin, format)) {
+        std::cerr << "Invalid batch\n";
+        return 1;
+    }
+    std::cout << inventory.report();
 }
