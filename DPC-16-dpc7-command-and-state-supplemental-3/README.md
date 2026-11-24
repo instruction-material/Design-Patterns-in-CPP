@@ -1,14 +1,5 @@
-# DPC7 Command and State supplemental 3
+# Redo across editor modes
 
-Course: Design Patterns in C++
-Module: DPC7 Command and State supplemental 3
+Compile with `c++ -std=c++20 -Wall -Wextra -pedantic main.cpp -o editor` and run `./editor`. Undo already restores the previous document. Extend the editor with redo. Store undone commands in a second stack of unique owners. Reapply the most recently undone command only when the current mode permits it. A successful redo returns the command to history. An empty stack or a mode rejection preserves the document and both stacks.
 
-Use the starter folder first. The starter is intentionally incomplete, and the solution shows one clean way to finish the same build after the student has worked through it.
-
-Suggested flow:
-- Read the module brief and identify the core requirement.
-- Complete the TODO markers in the starter implementation.
-- Test at least one custom case beyond the default example.
-- Compare against the solution only after the student has a working draft.
-
-Quick run hint: `c++ -std=c++17 main.cpp -o app && ./app`
+A newly applied edit starts another history branch and clears redo. Enqueuing or rejecting an edit must preserve redo. The example first prints A, then AB after redo. A rejected replacement leaves redo available in review mode. The last line should contain AC, because the accepted C edit invalidated the discarded B branch. Add a two-level undo and redo case to check the order.

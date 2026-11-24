@@ -14,6 +14,9 @@ on:
       - 'DPC-20-dpc9-*/**'
       - 'tests/test_injected_services.py'
       - 'DPC-09-dpc12-capstone-studio/**'
+      - 'DPC-15-dpc7-command-and-state-supplemental-2/**'
+      - 'DPC-16-dpc7-command-and-state-supplemental-3/**'
+      - 'tests/test_command_practice.py'
       - 'tests/test_import_capstone.py'
       - 'DPC1-Factories-and-Builders-Workshop/**'
       - 'tests/dashboard_family.cpp'
@@ -44,3 +47,5 @@ jobs:
           ctest --test-dir build --output-on-failure
       - name: Verify the capstone baseline, reference and completed starter
         run: python3 tests/test_import_capstone.py
+      - name: Exercise parsed editor commands and redo history
+        run: python3 tests/test_command_practice.py

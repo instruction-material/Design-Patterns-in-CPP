@@ -88,6 +88,11 @@ add_dpc_lab(
 	"DPC8-Legacy-Refactor-Capstone/solution/main.cpp"
 )
 
+add_dpc_lab(dpc_command_scanner_starter "DPC-15-dpc7-command-and-state-supplemental-2/starter/main.cpp")
+add_dpc_lab(dpc_command_scanner_solution "DPC-15-dpc7-command-and-state-supplemental-2/solution/main.cpp")
+add_dpc_lab(dpc_command_redo_starter "DPC-16-dpc7-command-and-state-supplemental-3/starter/main.cpp")
+add_dpc_lab(dpc_command_redo_solution "DPC-16-dpc7-command-and-state-supplemental-3/solution/main.cpp")
+
 include(CTest)
 if(BUILD_TESTING)
     add_dpc_lab(dpc_dashboard_family_check "tests/dashboard_family.cpp")

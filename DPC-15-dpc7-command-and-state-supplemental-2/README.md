@@ -1,14 +1,17 @@
-# DPC7 Command and State supplemental 2
+# Quoted editor commands
 
-Course: Design Patterns in C++
-Module: DPC7 Command and State supplemental 2
+Compile with `c++ -std=c++20 -Wall -Wextra -pedantic main.cpp -o editor` and run `./editor`. Enter one command per line. The input loop ends at end of file.
 
-Use the starter folder first. The starter is intentionally incomplete, and the solution shows one clean way to finish the same build after the student has worked through it.
+The running editor already handles mode, queue execution and undo. Complete the scanner in `parseLine` so it also accepts `append "some text"` and `replace "new text"`. Use `std::quoted` for spaces, escaped quotes and empty strings. Check the opening quote explicitly. The scanner must reject unknown verbs, missing quotes, unfinished strings and extra tokens. A syntax error leaves the session untouched.
 
-Suggested flow:
-- Read the module brief and identify the core requirement.
-- Complete the TODO markers in the starter implementation.
-- Test at least one custom case beyond the default example.
-- Compare against the solution only after the student has a working draft.
+Try the following input:
 
-Quick run hint: `c++ -std=c++17 main.cpp -o app && ./app`
+```text
+append "first draft"
+mode review
+replace "blocked"
+append "!"
+undo
+```
+
+The final document is `first draft`. A valid replace in review mode reaches the editor and is rejected there. An unquoted argument prints `Syntax error` before the editor sees a command.
