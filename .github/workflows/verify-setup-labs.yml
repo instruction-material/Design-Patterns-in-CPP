@@ -20,6 +20,11 @@ on:
       - 'DPC3-Observer-Event-Hub/**'
       - 'DPC4-Facade-Adapter-Import-Tool/**'
       - 'tests/test_event_and_import.py'
+      - 'tests/test_policy_observer.py'
+      - 'DPC-09-dpc4-strategy-and-policy-based-design-supplemental-2/**'
+      - 'DPC-10-dpc4-strategy-and-policy-based-design-supplemental-3/**'
+      - 'DPC-11-dpc5-observer-and-event-flow-supplemental-2/**'
+      - 'DPC-12-dpc5-observer-and-event-flow-supplemental-3/**'
       - 'tests/test_import_capstone.py'
       - 'DPC1-Factories-and-Builders-Workshop/**'
       - 'tests/dashboard_family.cpp'
@@ -60,3 +65,5 @@ jobs:
         run: python3 tests/test_command_practice.py
       - name: Check event delivery and equivalent import records
         run: python3 tests/test_event_and_import.py
+      - name: Check scheduling policies and observer practice
+        run: python3 tests/test_policy_observer.py

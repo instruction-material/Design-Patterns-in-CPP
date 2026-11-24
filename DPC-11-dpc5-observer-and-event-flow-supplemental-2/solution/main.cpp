@@ -1,78 +1,51 @@
-#include <cctype>
 #include <iostream>
 #include <memory>
 #include <string>
+#include <utility>
+#include <vector>
 
-/*****************
-*   CONSTANTS   *
-*****************/
+struct Event { std::string topic; std::string detail; };
 
-const std::string SAMPLE_TEXT = "design patterns";
-
-/*************
-*   TYPES   *
-*************/
-
-// Define the formatting strategy interface
-class Formatter {
-  public:
-    virtual ~Formatter() = default;
-
-    /**
-	 * @brief Format the provided input string
-	 *
-	 * @param input Text to format
-	 *
-	 * @return Formatted text
-	 */
-    virtual std::string format(const std::string& input) const = 0;
+struct Listener {
+    virtual ~Listener() = default;
+    virtual void receive(const Event& event) = 0;
 };
 
-// Format text by capitalizing the first letter of each word
-class TitleFormatter : public Formatter {
+struct Reporter final : Listener {
+    explicit Reporter(std::string name) : name_(std::move(name)) {}
+    void receive(const Event& event) override {
+        std::cout << name_ << ": " << event.detail << '\n';
+    }
+  private:
+    std::string name_;
+};
+
+class MatchFeed {
+    struct Slot { std::string topic; std::weak_ptr<Listener> listener; };
+    std::vector<Slot> slots_;
   public:
-    /**
-	 * @brief Convert input text to title case
-	 *
-	 * @param input Text to format
-	 *
-	 * @return Title-cased text
-	 */
-    std::string format(const std::string& input) const override {
-        std::string output = input;
-        bool should_uppercase_next_letter = true;
-
-        // Visit each character so word starts can be capitalized in place
-        for (char& character : output) {
-            // Spaces make the next non-space character start a new word
-            if (std::isspace(static_cast<unsigned char>(character))) {
-                should_uppercase_next_letter = true;
-                continue;
-            }
-
-            // Capitalize the first character after a word boundary
-            if (should_uppercase_next_letter) {
-                character = static_cast<char>(
-                    std::toupper(static_cast<unsigned char>(character)));
-                should_uppercase_next_letter = false;
-            }
+    void subscribe(std::string topic, const std::shared_ptr<Listener>& listener) {
+        slots_.push_back({std::move(topic), listener});
+    }
+    void publish(const Event& event) const {
+        const auto subscribers = slots_;
+        for (const auto& slot : subscribers) {
+            if (!slot.topic.empty() && slot.topic != event.topic) continue;
+            if (auto listener = slot.listener.lock()) listener->receive(event);
         }
-
-        return output;
     }
 };
 
-/*****************
-*   FUNCTIONS   *
-*****************/
-
-/**
- * @brief Print a title-formatted sample phrase
- *
- * @return Program exit status
- */
 int main() {
-    std::unique_ptr<Formatter> formatter = std::make_unique<TitleFormatter>();
-    std::cout << formatter->format(SAMPLE_TEXT) << "\n";
-    return 0;
+    MatchFeed feed;
+    auto score = std::make_shared<Reporter>("scoreboard");
+    auto ref = std::make_shared<Reporter>("referee");
+    auto log = std::make_shared<Reporter>("log");
+    feed.subscribe("goal", score);
+    feed.subscribe("foul", ref);
+    feed.subscribe("", log);
+    feed.publish({"goal", "blue scores"});
+    feed.publish({"foul", "holding"});
+    ref.reset();
+    feed.publish({"foul", "offside"});
 }

@@ -1,78 +1,56 @@
-#include <cctype>
+#include <algorithm>
+#include <functional>
 #include <iostream>
 #include <memory>
-#include <string>
+#include <utility>
+#include <vector>
 
-/*****************
-*   CONSTANTS   *
-*****************/
+using Callback = std::function<void()>;
 
-const std::string SAMPLE_TEXT = "design patterns";
-
-/*************
-*   TYPES   *
-*************/
-
-// Define the formatting strategy interface
-class Formatter {
+class Connection {
+    std::shared_ptr<Callback> callback_;
   public:
-    virtual ~Formatter() = default;
-
-    /**
-	 * @brief Format the provided input string
-	 *
-	 * @param input Text to format
-	 *
-	 * @return Formatted text
-	 */
-    virtual std::string format(const std::string& input) const = 0;
-};
-
-// Format text by capitalizing the first letter of each word
-class TitleFormatter : public Formatter {
-  public:
-    /**
-	 * @brief Convert input text to title case
-	 *
-	 * @param input Text to format
-	 *
-	 * @return Title-cased text
-	 */
-    std::string format(const std::string& input) const override {
-        std::string output = input;
-        bool should_uppercase_next_letter = true;
-
-        // Visit each character so word starts can be capitalized in place
-        for (char& character : output) {
-            // Spaces make the next non-space character start a new word
-            if (std::isspace(static_cast<unsigned char>(character))) {
-                should_uppercase_next_letter = true;
-                continue;
-            }
-
-            // Capitalize the first character after a word boundary
-            if (should_uppercase_next_letter) {
-                character = static_cast<char>(
-                    std::toupper(static_cast<unsigned char>(character)));
-                should_uppercase_next_letter = false;
-            }
-        }
-
-        return output;
+    explicit Connection(std::shared_ptr<Callback> callback) : callback_(std::move(callback)) {}
+    Connection(const Connection&) = delete;
+    Connection& operator=(const Connection&) = delete;
+    Connection(Connection&&) noexcept = default;
+    Connection& operator=(Connection&&) noexcept = default;
+    void disconnect() {
+        callback_.reset();
     }
 };
 
-/*****************
-*   FUNCTIONS   *
-*****************/
+class Clock {
+    std::vector<std::weak_ptr<Callback>> callbacks_;
+  public:
+    Connection subscribe(Callback fn) {
+        auto entry = std::make_shared<Callback>(std::move(fn));
+        callbacks_.push_back(entry);
+        return Connection(std::move(entry));
+    }
+    std::size_t registeredSlots() const { return callbacks_.size(); }
+    void tick() {
+        std::erase_if(callbacks_, [](const auto& slot) { return slot.expired(); });
+        const auto snapshot = callbacks_;
+        for (const auto& slot : snapshot) {
+            if (const auto active = slot.lock()) (*active)();
+        }
+    }
+};
 
-/**
- * @brief Print a title-formatted sample phrase
- *
- * @return Program exit status
- */
 int main() {
-    std::unique_ptr<Formatter> formatter = std::make_unique<TitleFormatter>();
-    std::cout << formatter->format(SAMPLE_TEXT) << "\n";
-    return 0;
+    Clock clock;
+    int first = 0, second = 0;
+    auto original = clock.subscribe([&] { ++first; });
+    auto moved = std::move(original);
+    original.disconnect();
+    {
+        auto other = clock.subscribe([&] { ++second; });
+        clock.tick();
+        moved.disconnect();
+        clock.tick();
+    }
+    clock.tick();
+    std::cout << "first=" << first << " second=" << second
+              << " slots=" << clock.registeredSlots() << '\n';
 }

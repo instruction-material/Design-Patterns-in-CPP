@@ -1,78 +1,53 @@
-#include <cctype>
 #include <iostream>
-#include <memory>
 #include <string>
+#include <vector>
 
-/*****************
-*   CONSTANTS   *
-*****************/
-
-const std::string SAMPLE_TEXT = "design patterns";
-
-/*************
-*   TYPES   *
-*************/
-
-// Define the formatting strategy interface
-class Formatter {
-  public:
-    virtual ~Formatter() = default;
-
-    /**
-	 * @brief Format the provided input string
-	 *
-	 * @param input Text to format
-	 *
-	 * @return Formatted text
-	 */
-    virtual std::string format(const std::string& input) const = 0;
+struct Job {
+    std::string name;
+    int minutes;
 };
 
-// Format text by capitalizing the first letter of each word
-class TitleFormatter : public Formatter {
+using Jobs = std::vector<Job>;
+
+class SchedulingRule {
   public:
-    /**
-	 * @brief Convert input text to title case
-	 *
-	 * @param input Text to format
-	 *
-	 * @return Title-cased text
-	 */
-    std::string format(const std::string& input) const override {
-        std::string output = input;
-        bool should_uppercase_next_letter = true;
+    virtual ~SchedulingRule() = default;
+    // Called only when at least one job is pending.
+    virtual std::size_t next(const Jobs& pending) const = 0;
+};
 
-        // Visit each character so word starts can be capitalized in place
-        for (char& character : output) {
-            // Spaces make the next non-space character start a new word
-            if (std::isspace(static_cast<unsigned char>(character))) {
-                should_uppercase_next_letter = true;
-                continue;
-            }
+class ArrivalOrder final : public SchedulingRule {
+  public:
+    std::size_t next(const Jobs&) const override { return 0; }
+};
 
-            // Capitalize the first character after a word boundary
-            if (should_uppercase_next_letter) {
-                character = static_cast<char>(
-                    std::toupper(static_cast<unsigned char>(character)));
-                should_uppercase_next_letter = false;
-            }
+class ShortestJob final : public SchedulingRule {
+  public:
+    std::size_t next(const Jobs& pending) const override {
+        std::size_t best = 0;
+        for (std::size_t i = 1; i < pending.size(); ++i) {
+            if (pending[i].minutes < pending[best].minutes) best = i;
         }
-
-        return output;
+        return best;
     }
 };
 
-/*****************
-*   FUNCTIONS   *
-*****************/
+std::vector<std::string> schedule(Jobs pending, const SchedulingRule& rule) {
+    std::vector<std::string> completed;
+    while (!pending.empty()) {
+        const auto index = rule.next(pending);
+        completed.push_back(pending.at(index).name);
+        pending.erase(pending.begin() + static_cast<Jobs::difference_type>(index));
+    }
+    return completed;
+}
 
-/**
- * @brief Print a title-formatted sample phrase
- *
- * @return Program exit status
- */
-int main() {
-    std::unique_ptr<Formatter> formatter = std::make_unique<TitleFormatter>();
-    std::cout << formatter->format(SAMPLE_TEXT) << "\n";
-    return 0;
+int main(int argc, char** argv) {
+    ArrivalOrder arrival;
+    ShortestJob shortest;
+    const SchedulingRule* rule = &arrival;
+    if (argc == 2 && std::string(argv[1]) == "shortest") rule = &shortest;
+    else if (argc != 1) { std::cerr << "Usage: practice [shortest]\n"; return 2; }
+    Jobs jobs{{"poster", 8}, {"card", 2}, {"label", 2}, {"map", 5}};
+    for (const auto& name : schedule(jobs, *rule)) std::cout << name << '\n';
 }

@@ -1,14 +1,14 @@
-# DPC5 Observer and Event Flow supplemental 3
+# Listener Lifetime Extension Practice
 
-Course: Design Patterns in C++
-Module: DPC5 Observer and Event Flow supplemental 3
+Use a move-only connection to control how long a clock callback receives ticks. The connection owns a shared callback, while the clock keeps a weak reference to it. Moving a connection transfers that ownership. Destroying a connection already releases it. Implement explicit disconnect, then remove expired weak entries at the start of each tick. Preserve the snapshot so a callback attached during a tick starts with the following tick.
 
-Use the starter folder first. The starter is intentionally incomplete, and the solution shows one clean way to finish the same build after the student has worked through it.
+## Checkpoints
 
-Suggested flow:
-- Read the module brief and identify the core requirement.
-- Complete the TODO markers in the starter implementation.
-- Test at least one custom case beyond the default example.
-- Compare against the solution only after the student has a working draft.
+Move the first connection into a new variable. The moved-from connection must have no effect when disconnected. After explicitly disconnecting the new owner, only the second callback runs. When its scope ends, the next tick removes the final expired entry. Test a second disconnect and confirm the counts stay unchanged.
 
-Quick run hint: `c++ -std=c++17 main.cpp -o app && ./app`
+Build and run from the downloaded folder:
+
+```sh
+c++ -std=c++20 -Wall -Wextra -pedantic main.cpp -o practice
+./practice
+```
