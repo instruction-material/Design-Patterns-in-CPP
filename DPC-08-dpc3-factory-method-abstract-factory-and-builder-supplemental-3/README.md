@@ -1,14 +1,5 @@
-# DPC3 Factory Method, Abstract Factory, and Builder supplemental 3
+# Independent event listings from one builder
 
-Course: Design Patterns in C++
-Module: DPC3 Factory Method, Abstract Factory, and Builder supplemental 3
+A builder assembles a listing from a required nonempty title, a positive capacity and an optional room. Default to online with one seat. Return an empty optional for an invalid listing. Each successful build produces an independent value even when the builder is edited and reused.
 
-Use the starter folder first. The starter is intentionally incomplete, and the solution shows one clean way to finish the same build after the student has worked through it.
-
-Suggested flow:
-- Read the module brief and identify the core requirement.
-- Complete the TODO markers in the starter implementation.
-- Test at least one custom case beyond the default example.
-- Compare against the solution only after the student has a working draft.
-
-Quick run hint: `c++ -std=c++17 main.cpp -o app && ./app`
+Each role folder includes a runnable program, the assignment and its checks.

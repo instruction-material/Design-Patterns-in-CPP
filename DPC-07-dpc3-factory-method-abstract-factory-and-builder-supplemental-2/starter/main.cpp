@@ -3,20 +3,56 @@
 #include <string>
 
 class Formatter {
-  public:
+public:
     virtual ~Formatter() = default;
-    virtual std::string format(const std::string& input) const = 0;
+    virtual std::string format(const std::string& city) const = 0;
 };
 
-class TitleFormatter : public Formatter {
-  public:
-    std::string format(const std::string& input) const override {
-        // TODO: return a transformed representation.
-        return input;
+class Domestic final : public Formatter {
+public:
+    std::string format(const std::string& city) const override { return "DOM " + city; }
+};
+
+class International final : public Formatter {
+public:
+    std::string format(const std::string& city) const override { return "INTL " + city; }
+};
+
+class PrintJob {
+public:
+    virtual ~PrintJob() = default;
+    std::string print(const std::string& city) const {
+        // TODO: request a product from the job's factory method.
+        Domestic formatter;
+        return "[" + formatter.format(city) + "]";
+    }
+protected:
+    virtual std::unique_ptr<Formatter> makeFormatter() const = 0;
+};
+
+class DomesticJob final : public PrintJob {
+    std::unique_ptr<Formatter> makeFormatter() const override {
+        return std::make_unique<Domestic>();
     }
 };
 
+class InternationalJob final : public PrintJob {
+    std::unique_ptr<Formatter> makeFormatter() const override {
+        return std::make_unique<International>();
+    }
+};
+
+bool check(const std::string& label, const std::string& actual, const std::string& expected) {
+    std::cout << label << ": observed [" << actual << "], expected [" << expected << "]\n";
+    return actual == expected;
+}
+
 int main() {
-    std::unique_ptr<Formatter> formatter = std::make_unique<TitleFormatter>();
-    std::cout << formatter->format("design patterns") << "\n";
+    DomesticJob local;
+    InternationalJob abroad;
+    const PrintJob& selected = abroad;
+    bool ok = check("domestic", local.print("Lima"), "[DOM Lima]");
+    ok &= check("international", selected.print("Lima"), "[INTL Lima]");
+    ok &= check("multiword city", selected.print("La Paz"), "[INTL La Paz]");
+    return ok ? 0 : 1;
 }

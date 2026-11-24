@@ -5,6 +5,8 @@ on:
       - 'DPC-05-dpc0-setup-and-tooling/**'
       - 'DPC-01-dpc0-setup-and-tooling-supplemental-2/**'
       - 'DPC-02-dpc0-setup-and-tooling-supplemental-3/**'
+      - 'DPC-07-dpc3-*/**'
+      - 'DPC-08-dpc3-*/**'
       - 'DPC-08-dpc9-*/**'
       - 'DPC-19-dpc9-*/**'
       - 'DPC-20-dpc9-*/**'
@@ -27,7 +29,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
       - name: Build the starter, completed exercise and reference for each lab
         run: python3 tests/test_setup_labs.py
-      - name: Verify three dependency injection starters and references
+      - name: Verify creation and dependency injection starters and references
         run: python3 tests/test_injected_services.py
       - name: Build course demos and check an independent dashboard family
         run: |

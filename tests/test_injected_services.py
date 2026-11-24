@@ -1,4 +1,4 @@
-"""Build and run each dependency-injection exercise in both distributed roles."""
+"""Build and run the scoped services and creation exercises in both distributed roles."""
 import os
 from pathlib import Path
 import subprocess
@@ -8,9 +8,11 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
 LABS = {
-    "08": ("south starts fresh", "intake resumes"),
-    "19": ("at deadline", "after deadline"),
-    "20": ("report order", "image isolation"),
+    "DPC-07-dpc3-*": ("international", "multiword city"),
+    "DPC-08-dpc3-*": ("configured", "zero capacity"),
+    "DPC-08-dpc9-*": ("south starts fresh", "intake resumes"),
+    "DPC-19-dpc9-*": ("at deadline", "after deadline"),
+    "DPC-20-dpc9-*": ("report order", "image isolation"),
 }
 
 
@@ -18,10 +20,10 @@ class InjectionLabs(unittest.TestCase):
     def test_role_contracts(self):
         with tempfile.TemporaryDirectory() as directory:
             executable = Path(directory) / "lab"
-            for prefix, checkpoints in LABS.items():
-                folder, = ROOT.glob(f"DPC-{prefix}-dpc9-*")
+            for pattern, checkpoints in LABS.items():
+                folder, = ROOT.glob(pattern)
                 for role, expected_exit in [("starter", 1), ("solution", 0)]:
-                    with self.subTest(lab=prefix, role=role):
+                    with self.subTest(lab=folder.name, role=role):
                         subprocess.run(
                             [os.environ.get("CXX", "c++"), "-std=c++20", "-Wall",
                              "-Wextra", "-Wpedantic", "-Werror", "-fsanitize=address,undefined",

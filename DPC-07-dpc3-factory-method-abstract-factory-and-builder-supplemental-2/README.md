@@ -1,14 +1,5 @@
-# DPC3 Factory Method, Abstract Factory, and Builder supplemental 2
+# A factory method for label printing
 
-Course: Design Patterns in C++
-Module: DPC3 Factory Method, Abstract Factory, and Builder supplemental 2
+A print job frames a shipping label in square brackets. Domestic and international jobs share the framing workflow but create different formatters. Route creation through the virtual makeFormatter method, use the product through its Formatter interface, and preserve ownership with unique_ptr. Keep PrintJob free of country-specific branches.
 
-Use the starter folder first. The starter is intentionally incomplete, and the solution shows one clean way to finish the same build after the student has worked through it.
-
-Suggested flow:
-- Read the module brief and identify the core requirement.
-- Complete the TODO markers in the starter implementation.
-- Test at least one custom case beyond the default example.
-- Compare against the solution only after the student has a working draft.
-
-Quick run hint: `c++ -std=c++17 main.cpp -o app && ./app`
+Each role folder includes a runnable program, the assignment and its checks.
