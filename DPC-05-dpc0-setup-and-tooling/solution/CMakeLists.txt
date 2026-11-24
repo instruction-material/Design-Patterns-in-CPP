@@ -1,0 +1,16 @@
+cmake_minimum_required(VERSION 3.20)
+project(title LANGUAGES CXX)
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+enable_testing()
+
+add_library(formatter formatter.cpp)
+add_executable(title main.cpp)
+target_link_libraries(title PRIVATE formatter)
+add_executable(checks checks.cpp)
+target_link_libraries(checks PRIVATE formatter)
+
+add_test(NAME empty COMMAND checks empty)
+add_test(NAME ordinary COMMAND checks ordinary)
+add_test(NAME spacing COMMAND checks spacing)

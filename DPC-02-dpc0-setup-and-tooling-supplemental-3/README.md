@@ -1,14 +1,13 @@
-# DPC0 Setup and Tooling supplemental 3
+# Register a second CMake target
 
-Course: Design Patterns in C++
-Module: DPC0 Setup and Tooling supplemental 3
+The starter builds a library and demo. Add the supplied checks as a separate target and register that target with CTest. The reference has the completed build definition. Run the commands below from either role folder.
 
-Use the starter folder first. The starter is intentionally incomplete, and the solution shows one clean way to finish the same build after the student has worked through it.
+From this directory, run:
 
-Suggested flow:
-- Read the module brief and identify the core requirement.
-- Complete the TODO markers in the starter implementation.
-- Test at least one custom case beyond the default example.
-- Compare against the solution only after the student has a working draft.
+```sh
+cmake -S . -B cmake-build -DCMAKE_BUILD_TYPE=Debug
+cmake --build cmake-build
+ctest --test-dir cmake-build --output-on-failure
+```
 
-Quick run hint: `c++ -std=c++17 main.cpp -o app && ./app`
+Use separate build directories for the starter and reference.

@@ -1,0 +1,16 @@
+cmake_minimum_required(VERSION 3.20)
+project(temperature_demo LANGUAGES CXX)
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+enable_testing()
+
+add_library(temperature temperature.cpp)
+add_executable(temperature_demo main.cpp)
+target_link_libraries(temperature_demo PRIVATE temperature)
+add_executable(checks checks.cpp)
+target_link_libraries(checks PRIVATE temperature)
+
+add_test(NAME even_sum COMMAND checks even_sum)
+add_test(NAME half_degree COMMAND checks half_degree)
+add_test(NAME below_zero COMMAND checks below_zero)

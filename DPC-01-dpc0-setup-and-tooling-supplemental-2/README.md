@@ -1,14 +1,13 @@
-# DPC0 Setup and Tooling supplemental 2
+# Trace a temperature average
 
-Course: Design Patterns in C++
-Module: DPC0 Setup and Tooling supplemental 2
+Build with debug symbols. Set a breakpoint at mean_temperature in temperature.cpp. Compare the sum, quotient and returned value for the three supplied pairs. Correct integer truncation, then explain why converting after division leaves the fractional part lost. Open starter first. Its two failing checks are intentional. Open solution for the independently buildable comparison after the exercise. Run the commands below from either role folder.
 
-Use the starter folder first. The starter is intentionally incomplete, and the solution shows one clean way to finish the same build after the student has worked through it.
+From this directory, run:
 
-Suggested flow:
-- Read the module brief and identify the core requirement.
-- Complete the TODO markers in the starter implementation.
-- Test at least one custom case beyond the default example.
-- Compare against the solution only after the student has a working draft.
+```sh
+cmake -S . -B cmake-build -DCMAKE_BUILD_TYPE=Debug
+cmake --build cmake-build
+ctest --test-dir cmake-build --output-on-failure
+```
 
-Quick run hint: `c++ -std=c++17 main.cpp -o app && ./app`
+Use separate build directories for the starter and reference.
