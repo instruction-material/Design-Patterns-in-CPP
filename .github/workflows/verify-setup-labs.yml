@@ -21,6 +21,9 @@ on:
       - 'DPC4-Facade-Adapter-Import-Tool/**'
       - 'tests/test_event_and_import.py'
       - 'tests/test_policy_observer.py'
+      - 'tests/test_composite_traversal.py'
+      - 'DPC-17-dpc8-composite-and-iterator-supplemental-2/**'
+      - 'DPC-18-dpc8-composite-and-iterator-supplemental-3/**'
       - 'DPC-09-dpc4-strategy-and-policy-based-design-supplemental-2/**'
       - 'DPC-10-dpc4-strategy-and-policy-based-design-supplemental-3/**'
       - 'DPC-11-dpc5-observer-and-event-flow-supplemental-2/**'
@@ -67,3 +70,5 @@ jobs:
         run: python3 tests/test_event_and_import.py
       - name: Check scheduling policies and observer practice
         run: python3 tests/test_policy_observer.py
+      - name: Verify recursive totals and traversal boundaries
+        run: python3 tests/test_composite_traversal.py

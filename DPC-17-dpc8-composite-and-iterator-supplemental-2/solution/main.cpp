@@ -1,78 +1,45 @@
-#include <cctype>
 #include <iostream>
 #include <memory>
 #include <string>
+#include <utility>
+#include <vector>
 
-/*****************
-*   CONSTANTS   *
-*****************/
-
-const std::string SAMPLE_TEXT = "design patterns";
-
-/*************
-*   TYPES   *
-*************/
-
-// Define the formatting strategy interface
-class Formatter {
+class Entry {
   public:
-    virtual ~Formatter() = default;
-
-    /**
-	 * @brief Format the provided input string
-	 *
-	 * @param input Text to format
-	 *
-	 * @return Formatted text
-	 */
-    virtual std::string format(const std::string& input) const = 0;
+    virtual ~Entry() = default;
+    virtual unsigned totalSeconds() const = 0;
 };
 
-// Format text by capitalizing the first letter of each word
-class TitleFormatter : public Formatter {
+class Track final : public Entry {
+    std::string name_;
+    unsigned duration_;
   public:
-    /**
-	 * @brief Convert input text to title case
-	 *
-	 * @param input Text to format
-	 *
-	 * @return Title-cased text
-	 */
-    std::string format(const std::string& input) const override {
-        std::string output = input;
-        bool should_uppercase_next_letter = true;
+    Track(std::string name, unsigned duration)
+        : name_(std::move(name)), duration_(duration) {}
+    const std::string& name() const { return name_; }
+    unsigned totalSeconds() const override { return duration_; }
+};
 
-        // Visit each character so word starts can be capitalized in place
-        for (char& character : output) {
-            // Spaces make the next non-space character start a new word
-            if (std::isspace(static_cast<unsigned char>(character))) {
-                should_uppercase_next_letter = true;
-                continue;
-            }
-
-            // Capitalize the first character after a word boundary
-            if (should_uppercase_next_letter) {
-                character = static_cast<char>(
-                    std::toupper(static_cast<unsigned char>(character)));
-                should_uppercase_next_letter = false;
-            }
-        }
-
-        return output;
+class Playlist final : public Entry {
+    std::vector<std::unique_ptr<Entry>> entries_;
+  public:
+    void add(std::unique_ptr<Entry> entry) {
+        entries_.push_back(std::move(entry));
+    }
+    unsigned totalSeconds() const override {
+        unsigned total = 0;
+        for (const auto& part : entries_) total += part->totalSeconds();
+        return total;
     }
 };
 
-/*****************
-*   FUNCTIONS   *
-*****************/
-
-/**
- * @brief Print a title-formatted sample phrase
- *
- * @return Program exit status
- */
 int main() {
-    std::unique_ptr<Formatter> formatter = std::make_unique<TitleFormatter>();
-    std::cout << formatter->format(SAMPLE_TEXT) << "\n";
-    return 0;
+    Playlist mix;
+    mix.add(std::make_unique<Track>("Intro", 120));
+    auto set = std::make_unique<Playlist>();
+    set->add(std::make_unique<Track>("Part A", 90));
+    set->add(std::make_unique<Track>("Part B", 45));
+    mix.add(std::move(set));
+    mix.add(std::make_unique<Playlist>());
+    std::cout << mix.totalSeconds() << '\n';
 }

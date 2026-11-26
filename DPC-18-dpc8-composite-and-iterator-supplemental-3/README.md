@@ -1,14 +1,12 @@
-# DPC8 Composite and Iterator supplemental 3
+# Iterator Boundary Extension Practice
 
-Course: Design Patterns in C++
-Module: DPC8 Composite and Iterator supplemental 3
+Use a read-only cursor to visit a static outline in breadth-first order. Build main.cpp with C++20. The starter can take the first node from a queue and report exhaustion, but only the root ever enters the queue. Before returning the current node, append its children at the back in their original order. Store borrowed pointers in the queue. Keep the source outline alive and fixed for the entire traversal.
 
-Use the starter folder first. The starter is intentionally incomplete, and the solution shows one clean way to finish the same build after the student has worked through it.
+## Checkpoints
 
-Suggested flow:
-- Read the module brief and identify the core requirement.
-- Complete the TODO markers in the starter implementation.
-- Test at least one custom case beyond the default example.
-- Compare against the solution only after the student has a working draft.
+The sample order is Course, Week 1, Week 2, Arrays, Loops, Grid. Test a one-node tree and call next twice after exhaustion. Both calls return null. Start two cursors on the same outline and advance one; the other remains at the root. Explain what would be invalidated if the caller rebuilt a child vector during traversal.
 
-Quick run hint: `c++ -std=c++17 main.cpp -o app && ./app`
+```sh
+c++ -std=c++20 -Wall -Wextra -pedantic main.cpp -o practice
+./practice
+```

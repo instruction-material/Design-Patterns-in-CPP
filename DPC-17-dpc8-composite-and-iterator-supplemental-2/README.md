@@ -1,14 +1,12 @@
-# DPC8 Composite and Iterator supplemental 2
+# Composite Traversal Transfer Practice
 
-Course: Design Patterns in C++
-Module: DPC8 Composite and Iterator supplemental 2
+Build the starter with C++20. A playlist owns tracks and can also own nested playlists. Track.totalSeconds returns its own duration. Implement Playlist.totalSeconds by asking each entry for its total through the common interface. A nested playlist reports its descendants through the same operation. Keep duration separate from the display name so two tracks with the same name can still contribute their own time.
 
-Use the starter folder first. The starter is intentionally incomplete, and the solution shows one clean way to finish the same build after the student has worked through it.
+## Checkpoints
 
-Suggested flow:
-- Read the module brief and identify the core requirement.
-- Complete the TODO markers in the starter implementation.
-- Test at least one custom case beyond the default example.
-- Compare against the solution only after the student has a working draft.
+The demo has a 120-second intro and a nested playlist containing tracks of 90 and 45 seconds, for a total of 255. An empty playlist contributes zero. Add a second track with the same name and a duration of 30 seconds, then predict the new total. Test a second level of nesting before comparing with the reference.
 
-Quick run hint: `c++ -std=c++17 main.cpp -o app && ./app`
+```sh
+c++ -std=c++20 -Wall -Wextra -pedantic main.cpp -o practice
+./practice
+```

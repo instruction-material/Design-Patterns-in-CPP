@@ -1,22 +1,31 @@
+#include <deque>
 #include <iostream>
-#include <memory>
 #include <string>
+#include <vector>
 
-class Formatter {
-  public:
-    virtual ~Formatter() = default;
-    virtual std::string format(const std::string& input) const = 0;
+struct Node {
+    std::string title;
+    std::vector<Node> children;
 };
 
-class TitleFormatter : public Formatter {
+class OutlineCursor {
+    std::deque<const Node*> pending_;
   public:
-    std::string format(const std::string& input) const override {
-        // TODO: return a transformed representation.
-        return input;
+    explicit OutlineCursor(const Node& root) : pending_{&root} {}
+    const Node* next() {
+        if (pending_.empty()) return nullptr;
+        const Node* current = pending_.front();
+        pending_.pop_front();
+        // TODO: enqueue the current node’s children.
+        return current;
     }
 };
 
 int main() {
-    std::unique_ptr<Formatter> formatter = std::make_unique<TitleFormatter>();
-    std::cout << formatter->format("design patterns") << "\n";
+    const Node outline{"Course", {
+        {"Week 1", {{"Arrays", {}}, {"Loops", {}}}},
+        {"Week 2", {{"Grid", {}}}}
+    }};
+    OutlineCursor cursor(outline);
+    while (const Node* node = cursor.next()) std::cout << node->title << '\n';
 }

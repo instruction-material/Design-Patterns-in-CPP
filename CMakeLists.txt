@@ -106,6 +106,11 @@ add_dpc_lab(dpc_match_feed_solution "DPC-11-dpc5-observer-and-event-flow-supplem
 add_dpc_lab(dpc_connection_starter "DPC-12-dpc5-observer-and-event-flow-supplemental-3/starter/main.cpp")
 add_dpc_lab(dpc_connection_solution "DPC-12-dpc5-observer-and-event-flow-supplemental-3/solution/main.cpp")
 
+add_dpc_lab(dpc_playlist_starter "DPC-17-dpc8-composite-and-iterator-supplemental-2/starter/main.cpp")
+add_dpc_lab(dpc_playlist_solution "DPC-17-dpc8-composite-and-iterator-supplemental-2/solution/main.cpp")
+add_dpc_lab(dpc_outline_starter "DPC-18-dpc8-composite-and-iterator-supplemental-3/starter/main.cpp")
+add_dpc_lab(dpc_outline_solution "DPC-18-dpc8-composite-and-iterator-supplemental-3/solution/main.cpp")
+
 include(CTest)
 if(BUILD_TESTING)
     add_dpc_lab(dpc_dashboard_family_check "tests/dashboard_family.cpp")

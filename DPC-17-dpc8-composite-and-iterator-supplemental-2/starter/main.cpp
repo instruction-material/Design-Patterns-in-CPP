@@ -1,22 +1,44 @@
 #include <iostream>
 #include <memory>
 #include <string>
+#include <utility>
+#include <vector>
 
-class Formatter {
+class Entry {
   public:
-    virtual ~Formatter() = default;
-    virtual std::string format(const std::string& input) const = 0;
+    virtual ~Entry() = default;
+    virtual unsigned totalSeconds() const = 0;
 };
 
-class TitleFormatter : public Formatter {
+class Track final : public Entry {
+    std::string name_;
+    unsigned duration_;
   public:
-    std::string format(const std::string& input) const override {
-        // TODO: return a transformed representation.
-        return input;
+    Track(std::string name, unsigned duration)
+        : name_(std::move(name)), duration_(duration) {}
+    const std::string& name() const { return name_; }
+    unsigned totalSeconds() const override { return duration_; }
+};
+
+class Playlist final : public Entry {
+    std::vector<std::unique_ptr<Entry>> entries_;
+  public:
+    void add(std::unique_ptr<Entry> entry) {
+        entries_.push_back(std::move(entry));
+    }
+    unsigned totalSeconds() const override {
+        // TODO: ask each owned entry for its duration.
+        return 0;
     }
 };
 
 int main() {
-    std::unique_ptr<Formatter> formatter = std::make_unique<TitleFormatter>();
-    std::cout << formatter->format("design patterns") << "\n";
+    Playlist mix;
+    mix.add(std::make_unique<Track>("Intro", 120));
+    auto set = std::make_unique<Playlist>();
+    set->add(std::make_unique<Track>("Part A", 90));
+    set->add(std::make_unique<Track>("Part B", 45));
+    mix.add(std::move(set));
+    mix.add(std::make_unique<Playlist>());
+    std::cout << mix.totalSeconds() << '\n';
 }
