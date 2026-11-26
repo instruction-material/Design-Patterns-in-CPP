@@ -1,78 +1,45 @@
-#include <cctype>
+#include <initializer_list>
 #include <iostream>
-#include <memory>
-#include <string>
+#include <optional>
 
-/*****************
-*   CONSTANTS   *
-*****************/
-
-const std::string SAMPLE_TEXT = "design patterns";
-
-/*************
-*   TYPES   *
-*************/
-
-// Define the formatting strategy interface
-class Formatter {
-  public:
-    virtual ~Formatter() = default;
-
-    /**
-	 * @brief Format the provided input string
-	 *
-	 * @param input Text to format
-	 *
-	 * @return Formatted text
-	 */
-    virtual std::string format(const std::string& input) const = 0;
+struct Probe {
+    virtual ~Probe() = default;
+    virtual std::optional<int> read() const = 0;
 };
 
-// Format text by capitalizing the first letter of each word
-class TitleFormatter : public Formatter {
-  public:
-    /**
-	 * @brief Convert input text to title case
-	 *
-	 * @param input Text to format
-	 *
-	 * @return Title-cased text
-	 */
-    std::string format(const std::string& input) const override {
-        std::string output = input;
-        bool should_uppercase_next_letter = true;
+struct FixedProbe final : Probe {
+    int reading;
+    explicit FixedProbe(int value) : reading(value) {}
+    std::optional<int> read() const override { return reading; }
+};
 
-        // Visit each character so word starts can be capitalized in place
-        for (char& character : output) {
-            // Spaces make the next non-space character start a new word
-            if (std::isspace(static_cast<unsigned char>(character))) {
-                should_uppercase_next_letter = true;
-                continue;
-            }
+struct OfflineProbe final : Probe {
+    std::optional<int> read() const override { return std::nullopt; }
+};
 
-            // Capitalize the first character after a word boundary
-            if (should_uppercase_next_letter) {
-                character = static_cast<char>(
-                    std::toupper(static_cast<unsigned char>(character)));
-                should_uppercase_next_letter = false;
-            }
-        }
+enum class Status { Missing, Below, Ready };
 
-        return output;
+Status inspect(const Probe& probe, int minimum) {
+    const auto value = probe.read();
+    if (!value) return Status::Missing;
+    return *value < minimum ? Status::Below : Status::Ready;
+}
+
+const char* label(Status status) {
+    switch (status) {
+        case Status::Missing: return "Missing";
+        case Status::Below: return "Below";
+        case Status::Ready: return "Ready";
     }
-};
+    return "Unknown";
+}
 
-/*****************
-*   FUNCTIONS   *
-*****************/
-
-/**
- * @brief Print a title-formatted sample phrase
- *
- * @return Program exit status
- */
 int main() {
-    std::unique_ptr<Formatter> formatter = std::make_unique<TitleFormatter>();
-    std::cout << formatter->format(SAMPLE_TEXT) << "\n";
-    return 0;
+    const FixedProbe atLimit(10), below(9);
+    const OfflineProbe unplugged;
+    for (const Probe* probe : {static_cast<const Probe*>(&atLimit),
+                               static_cast<const Probe*>(&below),
+                               static_cast<const Probe*>(&unplugged)}) {
+        std::cout << label(inspect(*probe, 10)) << '\n';
+    }
 }

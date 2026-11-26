@@ -22,6 +22,11 @@ on:
       - 'tests/test_event_and_import.py'
       - 'tests/test_policy_observer.py'
       - 'tests/test_composite_traversal.py'
+      - 'tests/test_value_ownership_labs.py'
+      - 'DPC-03-dpc1-why-patterns-look-different-in-modern-cpp-supplemental-2/**'
+      - 'DPC-04-dpc1-why-patterns-look-different-in-modern-cpp-supplemental-3/**'
+      - 'DPC-05-dpc2-design-foundations-supplemental-2/**'
+      - 'DPC-06-dpc2-design-foundations-supplemental-3/**'
       - 'DPC-17-dpc8-composite-and-iterator-supplemental-2/**'
       - 'DPC-18-dpc8-composite-and-iterator-supplemental-3/**'
       - 'DPC-09-dpc4-strategy-and-policy-based-design-supplemental-2/**'
@@ -72,3 +77,5 @@ jobs:
         run: python3 tests/test_policy_observer.py
       - name: Verify recursive totals and traversal boundaries
         run: python3 tests/test_composite_traversal.py
+      - name: Verify value dispatch, interfaces and ownership transfers
+        run: python3 tests/test_value_ownership_labs.py

@@ -1,14 +1,12 @@
-# DPC1 Why Patterns Look Different in Modern C++ supplemental 2
+# Modern Ownership Transfer Practice
 
-Course: Design Patterns in C++
-Module: DPC1 Why Patterns Look Different in Modern C++ supplemental 2
+The inbox owns a draft through a unique pointer. Its preview is a borrowed read-only pointer valid while that draft stays in the inbox. Build the starter with C++20. Implement take so it hands ownership of the exact draft to a caller and leaves the inbox empty. Use the returned owner for subsequent access. The member pointer already records whether the inbox contains a draft.
 
-Use the starter folder first. The starter is intentionally incomplete, and the solution shows one clean way to finish the same build after the student has worked through it.
+## Checkpoints
 
-Suggested flow:
-- Read the module brief and identify the core requirement.
-- Complete the TODO markers in the starter implementation.
-- Test at least one custom case beyond the default example.
-- Compare against the solution only after the student has a working draft.
+The sample previews Sketch, takes it, and reads the same title through the returned owner. Check that the inbox is empty after transfer and a second take returns an empty pointer. Rename the transferred draft and place it into a new inbox. Draw which variable owns the draft before take, after take, and after the final move.
 
-Quick run hint: `c++ -std=c++17 main.cpp -o app && ./app`
+```sh
+c++ -std=c++20 -Wall -Wextra -pedantic main.cpp -o practice
+./practice
+```

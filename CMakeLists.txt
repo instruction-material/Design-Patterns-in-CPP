@@ -111,6 +111,15 @@ add_dpc_lab(dpc_playlist_solution "DPC-17-dpc8-composite-and-iterator-supplement
 add_dpc_lab(dpc_outline_starter "DPC-18-dpc8-composite-and-iterator-supplemental-3/starter/main.cpp")
 add_dpc_lab(dpc_outline_solution "DPC-18-dpc8-composite-and-iterator-supplemental-3/solution/main.cpp")
 
+add_dpc_lab(dpc_draft_inbox_starter "DPC-03-dpc1-why-patterns-look-different-in-modern-cpp-supplemental-2/starter/main.cpp")
+add_dpc_lab(dpc_draft_inbox_solution "DPC-03-dpc1-why-patterns-look-different-in-modern-cpp-supplemental-2/solution/main.cpp")
+add_dpc_lab(dpc_tour_starter "DPC-04-dpc1-why-patterns-look-different-in-modern-cpp-supplemental-3/starter/main.cpp")
+add_dpc_lab(dpc_tour_solution "DPC-04-dpc1-why-patterns-look-different-in-modern-cpp-supplemental-3/solution/main.cpp")
+add_dpc_lab(dpc_probe_starter "DPC-05-dpc2-design-foundations-supplemental-2/starter/main.cpp")
+add_dpc_lab(dpc_probe_solution "DPC-05-dpc2-design-foundations-supplemental-2/solution/main.cpp")
+add_dpc_lab(dpc_slot_starter "DPC-06-dpc2-design-foundations-supplemental-3/starter/main.cpp")
+add_dpc_lab(dpc_slot_solution "DPC-06-dpc2-design-foundations-supplemental-3/solution/main.cpp")
+
 include(CTest)
 if(BUILD_TESTING)
     add_dpc_lab(dpc_dashboard_family_check "tests/dashboard_family.cpp")

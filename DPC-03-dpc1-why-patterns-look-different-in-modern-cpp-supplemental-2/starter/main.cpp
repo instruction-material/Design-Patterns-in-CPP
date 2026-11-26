@@ -1,22 +1,29 @@
 #include <iostream>
 #include <memory>
 #include <string>
+#include <utility>
 
-class Formatter {
-  public:
-    virtual ~Formatter() = default;
-    virtual std::string format(const std::string& input) const = 0;
+struct Draft {
+    std::string title;
 };
 
-class TitleFormatter : public Formatter {
+class Inbox {
+    std::unique_ptr<Draft> current_;
   public:
-    std::string format(const std::string& input) const override {
-        // TODO: return a transformed representation.
-        return input;
+    explicit Inbox(std::unique_ptr<Draft> draft) : current_(std::move(draft)) {}
+
+    const Draft* preview() const { return current_.get(); }
+
+    std::unique_ptr<Draft> take() {
+        // TODO: transfer the current draft.
+        return nullptr;
     }
 };
 
 int main() {
-    std::unique_ptr<Formatter> formatter = std::make_unique<TitleFormatter>();
-    std::cout << formatter->format("design patterns") << "\n";
+    Inbox inbox(std::make_unique<Draft>(Draft{"Sketch"}));
+    if (const auto* draft = inbox.preview()) std::cout << "Preview: " << draft->title << '\n';
+    auto claimed = inbox.take();
+    std::cout << "Claimed: " << (claimed ? claimed->title : "(empty)") << '\n';
+    std::cout << "Inbox: " << (inbox.preview() ? "occupied" : "empty") << '\n';
 }

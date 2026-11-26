@@ -1,22 +1,22 @@
 #include <iostream>
-#include <memory>
 #include <string>
+#include <variant>
+#include <vector>
 
-class Formatter {
-  public:
-    virtual ~Formatter() = default;
-    virtual std::string format(const std::string& input) const = 0;
-};
+struct Card { std::string label; };
+struct Pause { unsigned seconds; };
+using TourStep = std::variant<Card, Pause>;
 
-class TitleFormatter : public Formatter {
-  public:
-    std::string format(const std::string& input) const override {
-        // TODO: return a transformed representation.
-        return input;
-    }
-};
+std::string describe(const Card& card) { return "Show: " + card.label; }
+std::string describe(const Pause& pause) { return "Pause: " + std::to_string(pause.seconds) + " seconds"; }
+
+std::string render(const TourStep& step) {
+    // TODO: use the overload for the active alternative.
+    (void)step;
+    return "(unrendered)";
+}
 
 int main() {
-    std::unique_ptr<Formatter> formatter = std::make_unique<TitleFormatter>();
-    std::cout << formatter->format("design patterns") << "\n";
+    const std::vector<TourStep> tour{Card{"Welcome"}, Pause{3}, Card{"Map"}};
+    for (const auto& step : tour) std::cout << render(step) << '\n';
 }

@@ -1,14 +1,12 @@
-# DPC2 Design Foundations supplemental 3
+# Move Semantics Extension Practice
 
-Course: Design Patterns in C++
-Module: DPC2 Design Foundations supplemental 3
+A move-only slot lease releases its slot in the destructor. The move constructor already transfers a slot and makes the source lease empty. Build the starter and trace that constructor. Complete move assignment so it releases the destination’s existing slot before transferring the source slot. When the source and destination are the same object, keep the slot. The registry must outlive every lease.
 
-Use the starter folder first. The starter is intentionally incomplete, and the solution shows one clean way to finish the same build after the student has worked through it.
+## Checkpoints
 
-Suggested flow:
-- Read the module brief and identify the core requirement.
-- Complete the TODO markers in the starter implementation.
-- Test at least one custom case beyond the default example.
-- Compare against the solution only after the student has a working draft.
+The demo starts with two live slots. Assigning the first lease to the second by move leaves one live slot, and the source becomes empty. After both leases leave scope the registry has zero live slots. Also test assigning an empty moved-from lease and moving through an alias of the same object. Both cases preserve the expected release counts.
 
-Quick run hint: `c++ -std=c++17 main.cpp -o app && ./app`
+```sh
+c++ -std=c++20 -Wall -Wextra -pedantic main.cpp -o practice
+./practice
+```

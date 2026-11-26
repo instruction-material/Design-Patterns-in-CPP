@@ -1,78 +1,65 @@
-#include <cctype>
+#include <cassert>
 #include <iostream>
-#include <memory>
-#include <string>
+#include <set>
+#include <utility>
 
-/*****************
-*   CONSTANTS   *
-*****************/
-
-const std::string SAMPLE_TEXT = "design patterns";
-
-/*************
-*   TYPES   *
-*************/
-
-// Define the formatting strategy interface
-class Formatter {
+class Registry {
+    unsigned next_ = 0;
+    std::set<unsigned> live_;
   public:
-    virtual ~Formatter() = default;
+    Registry() = default;
+    Registry(const Registry&) = delete;
+    Registry& operator=(const Registry&) = delete;
 
-    /**
-	 * @brief Format the provided input string
-	 *
-	 * @param input Text to format
-	 *
-	 * @return Formatted text
-	 */
-    virtual std::string format(const std::string& input) const = 0;
+    unsigned acquire() {
+        const auto slot = next_++;
+        live_.insert(slot);
+        return slot;
+    }
+    void release(unsigned slot) {
+        const auto removed = live_.erase(slot);
+        assert(removed == 1);
+        (void)removed;
+    }
+    std::size_t active() const { return live_.size(); }
 };
 
-// Format text by capitalizing the first letter of each word
-class TitleFormatter : public Formatter {
+class Lease {
+    Registry* registry_;
+    unsigned slot_;
   public:
-    /**
-	 * @brief Convert input text to title case
-	 *
-	 * @param input Text to format
-	 *
-	 * @return Title-cased text
-	 */
-    std::string format(const std::string& input) const override {
-        std::string output = input;
-        bool should_uppercase_next_letter = true;
+    explicit Lease(Registry& registry) : registry_(&registry), slot_(registry.acquire()) {}
+    ~Lease() { reset(); }
+    Lease(const Lease&) = delete;
+    Lease& operator=(const Lease&) = delete;
 
-        // Visit each character so word starts can be capitalized in place
-        for (char& character : output) {
-            // Spaces make the next non-space character start a new word
-            if (std::isspace(static_cast<unsigned char>(character))) {
-                should_uppercase_next_letter = true;
-                continue;
-            }
+    Lease(Lease&& other) noexcept
+        : registry_(std::exchange(other.registry_, nullptr)), slot_(other.slot_) {}
 
-            // Capitalize the first character after a word boundary
-            if (should_uppercase_next_letter) {
-                character = static_cast<char>(
-                    std::toupper(static_cast<unsigned char>(character)));
-                should_uppercase_next_letter = false;
-            }
+    Lease& operator=(Lease&& other) noexcept {
+        if (this != &other) {
+            reset();
+            registry_ = std::exchange(other.registry_, nullptr);
+            slot_ = other.slot_;
         }
+        return *this;
+    }
+    bool ownsSlot() const { return registry_ != nullptr; }
 
-        return output;
+  private:
+    void reset() noexcept {
+        if (registry_) registry_->release(slot_);
+        registry_ = nullptr;
     }
 };
 
-/*****************
-*   FUNCTIONS   *
-*****************/
-
-/**
- * @brief Print a title-formatted sample phrase
- *
- * @return Program exit status
- */
 int main() {
-    std::unique_ptr<Formatter> formatter = std::make_unique<TitleFormatter>();
-    std::cout << formatter->format(SAMPLE_TEXT) << "\n";
-    return 0;
+    Registry registry;
+    {
+        Lease first(registry), second(registry);
+        std::cout << registry.active() << '\n';
+        second = std::move(first);
+        std::cout << registry.active() << " " << std::boolalpha << first.ownsSlot() << '\n';
+    }
+    std::cout << registry.active() << '\n';
 }

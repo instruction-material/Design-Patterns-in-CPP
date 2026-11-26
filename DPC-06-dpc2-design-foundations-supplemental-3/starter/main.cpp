@@ -1,22 +1,62 @@
+#include <cassert>
 #include <iostream>
-#include <memory>
-#include <string>
+#include <set>
+#include <utility>
 
-class Formatter {
+class Registry {
+    unsigned next_ = 0;
+    std::set<unsigned> live_;
   public:
-    virtual ~Formatter() = default;
-    virtual std::string format(const std::string& input) const = 0;
+    Registry() = default;
+    Registry(const Registry&) = delete;
+    Registry& operator=(const Registry&) = delete;
+
+    unsigned acquire() {
+        const auto slot = next_++;
+        live_.insert(slot);
+        return slot;
+    }
+    void release(unsigned slot) {
+        const auto removed = live_.erase(slot);
+        assert(removed == 1);
+        (void)removed;
+    }
+    std::size_t active() const { return live_.size(); }
 };
 
-class TitleFormatter : public Formatter {
+class Lease {
+    Registry* registry_;
+    unsigned slot_;
   public:
-    std::string format(const std::string& input) const override {
-        // TODO: return a transformed representation.
-        return input;
+    explicit Lease(Registry& registry) : registry_(&registry), slot_(registry.acquire()) {}
+    ~Lease() { reset(); }
+    Lease(const Lease&) = delete;
+    Lease& operator=(const Lease&) = delete;
+
+    Lease(Lease&& other) noexcept
+        : registry_(std::exchange(other.registry_, nullptr)), slot_(other.slot_) {}
+
+    Lease& operator=(Lease&& other) noexcept {
+        // TODO: release the old slot and take ownership of the source slot.
+        (void)other;
+        return *this;
+    }
+    bool ownsSlot() const { return registry_ != nullptr; }
+
+  private:
+    void reset() noexcept {
+        if (registry_) registry_->release(slot_);
+        registry_ = nullptr;
     }
 };
 
 int main() {
-    std::unique_ptr<Formatter> formatter = std::make_unique<TitleFormatter>();
-    std::cout << formatter->format("design patterns") << "\n";
+    Registry registry;
+    {
+        Lease first(registry), second(registry);
+        std::cout << registry.active() << '\n';
+        second = std::move(first);
+        std::cout << registry.active() << " " << std::boolalpha << first.ownsSlot() << '\n';
+    }
+    std::cout << registry.active() << '\n';
 }

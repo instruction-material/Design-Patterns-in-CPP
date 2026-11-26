@@ -1,22 +1,46 @@
+#include <initializer_list>
 #include <iostream>
-#include <memory>
-#include <string>
+#include <optional>
 
-class Formatter {
-  public:
-    virtual ~Formatter() = default;
-    virtual std::string format(const std::string& input) const = 0;
+struct Probe {
+    virtual ~Probe() = default;
+    virtual std::optional<int> read() const = 0;
 };
 
-class TitleFormatter : public Formatter {
-  public:
-    std::string format(const std::string& input) const override {
-        // TODO: return a transformed representation.
-        return input;
+struct FixedProbe final : Probe {
+    int reading;
+    explicit FixedProbe(int value) : reading(value) {}
+    std::optional<int> read() const override { return reading; }
+};
+
+struct OfflineProbe final : Probe {
+    std::optional<int> read() const override { return std::nullopt; }
+};
+
+enum class Status { Missing, Below, Ready };
+
+Status inspect(const Probe& probe, int minimum) {
+    // TODO: read once, then distinguish the absent and present cases.
+    (void)probe;
+    (void)minimum;
+    return Status::Missing;
+}
+
+const char* label(Status status) {
+    switch (status) {
+        case Status::Missing: return "Missing";
+        case Status::Below: return "Below";
+        case Status::Ready: return "Ready";
     }
-};
+    return "Unknown";
+}
 
 int main() {
-    std::unique_ptr<Formatter> formatter = std::make_unique<TitleFormatter>();
-    std::cout << formatter->format("design patterns") << "\n";
+    const FixedProbe atLimit(10), below(9);
+    const OfflineProbe unplugged;
+    for (const Probe* probe : {static_cast<const Probe*>(&atLimit),
+                               static_cast<const Probe*>(&below),
+                               static_cast<const Probe*>(&unplugged)}) {
+        std::cout << label(inspect(*probe, 10)) << '\n';
+    }
 }
