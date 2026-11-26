@@ -1,78 +1,70 @@
-#include <cctype>
+#include <algorithm>
+#include <charconv>
 #include <iostream>
-#include <memory>
 #include <string>
+#include <utility>
+#include <vector>
 
-/*****************
-*   CONSTANTS   *
-*****************/
-
-const std::string SAMPLE_TEXT = "design patterns";
-
-/*************
-*   TYPES   *
-*************/
-
-// Define the formatting strategy interface
-class Formatter {
-  public:
-    virtual ~Formatter() = default;
-
-    /**
-	 * @brief Format the provided input string
-	 *
-	 * @param input Text to format
-	 *
-	 * @return Formatted text
-	 */
-    virtual std::string format(const std::string& input) const = 0;
+struct DeskSlip {
+    std::string label;
+    int seat;
 };
 
-// Format text by capitalizing the first letter of each word
-class TitleFormatter : public Formatter {
-  public:
-    /**
-	 * @brief Convert input text to title case
-	 *
-	 * @param input Text to format
-	 *
-	 * @return Title-cased text
-	 */
-    std::string format(const std::string& input) const override {
-        std::string output = input;
-        bool should_uppercase_next_letter = true;
+struct MailSlip {
+    std::string label;
+    std::string seatText;
+};
 
-        // Visit each character so word starts can be capitalized in place
-        for (char& character : output) {
-            // Spaces make the next non-space character start a new word
-            if (std::isspace(static_cast<unsigned char>(character))) {
-                should_uppercase_next_letter = true;
-                continue;
-            }
+struct Guest {
+    std::string label;
+    int seat;
+};
 
-            // Capitalize the first character after a word boundary
-            if (should_uppercase_next_letter) {
-                character = static_cast<char>(
-                    std::toupper(static_cast<unsigned char>(character)));
-                should_uppercase_next_letter = false;
-            }
-        }
-
-        return output;
+class Workshop {
+public:
+    bool admit(const DeskSlip& slip) {
+        return reserve({slip.label, slip.seat});
     }
+
+    bool admit(const MailSlip& slip) {
+        int seat = 0;
+        const char* end = slip.seatText.data() + slip.seatText.size();
+        const auto parsed = std::from_chars(slip.seatText.data(), end, seat);
+        if (parsed.ec != std::errc{} || parsed.ptr != end) return false;
+        return reserve({slip.label, seat});
+    }
+
+    bool withdraw(int seat) {
+        return std::erase_if(guests_, [seat](const Guest& guest) {
+            return guest.seat == seat;
+        }) != 0;
+    }
+
+    const std::vector<Guest>& guests() const { return guests_; }
+
+private:
+    bool reserve(Guest guest) {
+        if (guest.label.empty() || guest.seat < 1 || guest.seat > 12) return false;
+        if (std::ranges::any_of(guests_, [&guest](const Guest& held) {
+            return held.seat == guest.seat;
+        })) return false;
+        guests_.push_back(std::move(guest));
+        return true;
+    }
+
+    std::vector<Guest> guests_;
 };
 
-/*****************
-*   FUNCTIONS   *
-*****************/
-
-/**
- * @brief Print a title-formatted sample phrase
- *
- * @return Program exit status
- */
 int main() {
-    std::unique_ptr<Formatter> formatter = std::make_unique<TitleFormatter>();
-    std::cout << formatter->format(SAMPLE_TEXT) << "\n";
-    return 0;
+    Workshop workshop;
+    std::cout << std::boolalpha;
+    const bool desk = workshop.admit(DeskSlip{"Ada", 2});
+    const bool mail = workshop.admit(MailSlip{"Mina", "3"});
+    const bool invalid = workshop.admit(MailSlip{"Jo", "3x"});
+    std::cout << desk << ' ' << mail << ' ' << invalid << '\n';
+    const bool first = workshop.withdraw(2);
+    const bool second = workshop.withdraw(2);
+    const bool reused = workshop.admit(MailSlip{"Jo", "2"});
+    std::cout << first << ' ' << second << ' ' << reused << '\n';
+    for (const auto& guest : workshop.guests()) std::cout << guest.label << ':' << guest.seat << '\n';
 }

@@ -1,14 +1,20 @@
-# pattern implementation lab 15
+# Runtime Variation Project
 
-Course: Design Patterns in C++
-Module: pattern implementation lab 15
+A gallery sign can show only a title or add its room number. SignPrinter receives a Style from its caller and borrows it. Complete text so it calls that style’s format method and returns the result. Keep selection outside the printer and keep both supplied styles alive while the printer uses them.
 
-Use the starter folder first. The starter is intentionally incomplete, and the solution shows one clean way to finish the same build after the student has worked through it.
+From either role folder, build and run with a C++20 compiler.
 
-Suggested flow:
-- Read the module brief and identify the core requirement.
-- Complete the TODO markers in the starter implementation.
-- Test at least one custom case beyond the default example.
-- Compare against the solution only after the student has a working draft.
+```sh
+c++ -std=c++20 -Wall -Wextra -pedantic main.cpp -o practice
+./practice
+```
 
-Quick run hint: `c++ -std=c++17 main.cpp -o app && ./app`
+## Checkpoints
+
+Pass the same print job to a brief style and a detailed style. For Maps in room 4 the formats are Maps and Maps (room 4). Add another job to confirm the printer uses the argument rather than a fixed room or title.
+
+## Runtime Variation Extension Challenge
+
+After printing with both existing styles works, implement use to switch an existing printer to a new style. Keep the displayed job and both strategies unchanged. Switching back restores the original formatting.
+
+Trace the same Maps sign through brief, detailed and brief formatting. Test a different title and room after each switch. The printer borrows the current strategy, so the strategy must outlive each use.

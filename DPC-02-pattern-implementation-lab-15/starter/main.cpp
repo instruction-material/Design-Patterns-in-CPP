@@ -1,22 +1,54 @@
 #include <iostream>
-#include <memory>
 #include <string>
 
-class Formatter {
-  public:
-    virtual ~Formatter() = default;
-    virtual std::string format(const std::string& input) const = 0;
+struct Exhibit {
+    std::string title;
+    int room;
 };
 
-class TitleFormatter : public Formatter {
-  public:
-    std::string format(const std::string& input) const override {
-        // TODO: return a transformed representation.
-        return input;
+class Style {
+public:
+    virtual ~Style() = default;
+    virtual std::string format(const Exhibit& exhibit) const = 0;
+};
+
+class Brief final : public Style {
+public:
+    std::string format(const Exhibit& exhibit) const override {
+        return exhibit.title;
     }
 };
 
+class Detailed final : public Style {
+public:
+    std::string format(const Exhibit& exhibit) const override {
+        return exhibit.title + " (room " + std::to_string(exhibit.room) + ")";
+    }
+};
+
+class SignPrinter {
+public:
+    explicit SignPrinter(const Style& style) : style_(&style) {}
+    std::string text(const Exhibit& exhibit) const {
+        (void)exhibit;
+        return "(no sign)"; // TODO: Use the supplied style.
+    }
+    void use(const Style& style) {
+        (void)style; // TODO: Update the borrowed strategy.
+    }
+
+private:
+    [[maybe_unused]] const Style* style_;
+};
+
 int main() {
-    std::unique_ptr<Formatter> formatter = std::make_unique<TitleFormatter>();
-    std::cout << formatter->format("design patterns") << "\n";
+    const Brief brief;
+    const Detailed detailed;
+    const Exhibit maps{"Maps", 4};
+    SignPrinter signs(brief), details(detailed);
+    std::cout << signs.text(maps) << '\n' << details.text(maps) << '\n';
+    signs.use(detailed);
+    std::cout << signs.text(maps) << '\n';
+    signs.use(brief);
+    std::cout << signs.text(maps) << '\n';
 }

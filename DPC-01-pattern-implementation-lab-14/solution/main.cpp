@@ -1,78 +1,56 @@
-#include <cctype>
+#include <algorithm>
 #include <iostream>
 #include <memory>
 #include <string>
+#include <string_view>
+#include <utility>
+#include <vector>
 
-/*****************
-*   CONSTANTS   *
-*****************/
-
-const std::string SAMPLE_TEXT = "design patterns";
-
-/*************
-*   TYPES   *
-*************/
-
-// Define the formatting strategy interface
-class Formatter {
-  public:
-    virtual ~Formatter() = default;
-
-    /**
-	 * @brief Format the provided input string
-	 *
-	 * @param input Text to format
-	 *
-	 * @return Formatted text
-	 */
-    virtual std::string format(const std::string& input) const = 0;
+struct Instrument {
+    std::string label;
 };
 
-// Format text by capitalizing the first letter of each word
-class TitleFormatter : public Formatter {
-  public:
-    /**
-	 * @brief Convert input text to title case
-	 *
-	 * @param input Text to format
-	 *
-	 * @return Title-cased text
-	 */
-    std::string format(const std::string& input) const override {
-        std::string output = input;
-        bool should_uppercase_next_letter = true;
-
-        // Visit each character so word starts can be capitalized in place
-        for (char& character : output) {
-            // Spaces make the next non-space character start a new word
-            if (std::isspace(static_cast<unsigned char>(character))) {
-                should_uppercase_next_letter = true;
-                continue;
-            }
-
-            // Capitalize the first character after a word boundary
-            if (should_uppercase_next_letter) {
-                character = static_cast<char>(
-                    std::toupper(static_cast<unsigned char>(character)));
-                should_uppercase_next_letter = false;
-            }
-        }
-
-        return output;
+class Bench {
+public:
+    bool accept(std::unique_ptr<Instrument> tool) {
+        if (!tool) return false;
+        items_.push_back(std::move(tool));
+        return true;
     }
+
+    const Instrument* find(std::string_view name) const {
+        const auto found = std::ranges::find_if(items_, [name](const auto& item) {
+            return item->label == name;
+        });
+        return found == items_.end() ? nullptr : found->get();
+    }
+
+    std::unique_ptr<Instrument> extract(std::string_view name) {
+        const auto found = std::ranges::find_if(items_, [name](const auto& item) {
+            return item->label == name;
+        });
+        if (found == items_.end()) return {};
+        auto instrument = std::move(*found);
+        items_.erase(found);
+        return instrument;
+    }
+
+private:
+    std::vector<std::unique_ptr<Instrument>> items_;
 };
 
-/*****************
-*   FUNCTIONS   *
-*****************/
-
-/**
- * @brief Print a title-formatted sample phrase
- *
- * @return Program exit status
- */
 int main() {
-    std::unique_ptr<Formatter> formatter = std::make_unique<TitleFormatter>();
-    std::cout << formatter->format(SAMPLE_TEXT) << "\n";
-    return 0;
+    Bench bench;
+    auto lute = std::make_unique<Instrument>(Instrument{"lute"});
+    const Instrument* address = lute.get();
+    bench.accept(std::move(lute));
+    bench.accept(std::make_unique<Instrument>(Instrument{"drum"}));
+    const Instrument* stored = bench.find("lute");
+    std::cout << std::boolalpha << "Original address: "
+              << (stored && stored == address) << '\n';
+    const auto returned = bench.extract("lute");
+    std::cout << "Returned: " << (returned ? returned->label : "(empty)") << '\n';
+    std::cout << "Lute removed: " << (bench.find("lute") == nullptr) << '\n';
+    std::cout << "Unknown is empty: " << !bench.extract("missing") << '\n';
+    std::cout << "Drum remains: " << (bench.find("drum") != nullptr) << '\n';
 }

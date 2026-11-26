@@ -1,78 +1,43 @@
-#include <cctype>
+#include <cstdint>
 #include <iostream>
-#include <memory>
-#include <string>
+#include <vector>
 
-/*****************
-*   CONSTANTS   *
-*****************/
+enum class State { Ready, Repair, Retired };
 
-const std::string SAMPLE_TEXT = "design patterns";
-
-/*************
-*   TYPES   *
-*************/
-
-// Define the formatting strategy interface
-class Formatter {
-  public:
-    virtual ~Formatter() = default;
-
-    /**
-	 * @brief Format the provided input string
-	 *
-	 * @param input Text to format
-	 *
-	 * @return Formatted text
-	 */
-    virtual std::string format(const std::string& input) const = 0;
+struct Row {
+    State state;
+    int quantity;
 };
 
-// Format text by capitalizing the first letter of each word
-class TitleFormatter : public Formatter {
-  public:
-    /**
-	 * @brief Convert input text to title case
-	 *
-	 * @param input Text to format
-	 *
-	 * @return Title-cased text
-	 */
-    std::string format(const std::string& input) const override {
-        std::string output = input;
-        bool should_uppercase_next_letter = true;
+struct Summary {
+    std::int64_t ready = 0;
+    std::int64_t repair = 0;
+    std::int64_t retired = 0;
+};
 
-        // Visit each character so word starts can be capitalized in place
-        for (char& character : output) {
-            // Spaces make the next non-space character start a new word
-            if (std::isspace(static_cast<unsigned char>(character))) {
-                should_uppercase_next_letter = true;
-                continue;
-            }
-
-            // Capitalize the first character after a word boundary
-            if (should_uppercase_next_letter) {
-                character = static_cast<char>(
-                    std::toupper(static_cast<unsigned char>(character)));
-                should_uppercase_next_letter = false;
-            }
+Summary summarize(const std::vector<Row>& rows) {
+    Summary report;
+    for (const auto& row : rows) {
+        if (row.quantity <= 0) continue;
+        switch (row.state) {
+        case State::Ready: report.ready += row.quantity; break;
+        case State::Repair: report.repair += row.quantity; break;
+        case State::Retired: report.retired += row.quantity; break;
         }
-
-        return output;
     }
-};
+    return report;
+}
 
-/*****************
-*   FUNCTIONS   *
-*****************/
+void print(const Summary& report, bool includeRetired = false) {
+    std::cout << "ready=" << report.ready << '\n';
+    std::cout << "repair=" << report.repair << '\n';
+    if (includeRetired) std::cout << "retired=" << report.retired << '\n';
+}
 
-/**
- * @brief Print a title-formatted sample phrase
- *
- * @return Program exit status
- */
 int main() {
-    std::unique_ptr<Formatter> formatter = std::make_unique<TitleFormatter>();
-    std::cout << formatter->format(SAMPLE_TEXT) << "\n";
-    return 0;
+    const std::vector<Row> initial{{State::Ready, 2}, {State::Repair, 1}, {State::Ready, 3}};
+    print(summarize(initial));
+    auto extra = initial;
+    extra.push_back({State::Retired, 3});
+    print(summarize(extra), true);
 }

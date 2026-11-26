@@ -1,78 +1,53 @@
-#include <cctype>
 #include <iostream>
-#include <memory>
 #include <string>
 
-/*****************
-*   CONSTANTS   *
-*****************/
-
-const std::string SAMPLE_TEXT = "design patterns";
-
-/*************
-*   TYPES   *
-*************/
-
-// Define the formatting strategy interface
-class Formatter {
-  public:
-    virtual ~Formatter() = default;
-
-    /**
-	 * @brief Format the provided input string
-	 *
-	 * @param input Text to format
-	 *
-	 * @return Formatted text
-	 */
-    virtual std::string format(const std::string& input) const = 0;
+struct Exhibit {
+    std::string title;
+    int room;
 };
 
-// Format text by capitalizing the first letter of each word
-class TitleFormatter : public Formatter {
-  public:
-    /**
-	 * @brief Convert input text to title case
-	 *
-	 * @param input Text to format
-	 *
-	 * @return Title-cased text
-	 */
-    std::string format(const std::string& input) const override {
-        std::string output = input;
-        bool should_uppercase_next_letter = true;
+class Style {
+public:
+    virtual ~Style() = default;
+    virtual std::string format(const Exhibit& exhibit) const = 0;
+};
 
-        // Visit each character so word starts can be capitalized in place
-        for (char& character : output) {
-            // Spaces make the next non-space character start a new word
-            if (std::isspace(static_cast<unsigned char>(character))) {
-                should_uppercase_next_letter = true;
-                continue;
-            }
-
-            // Capitalize the first character after a word boundary
-            if (should_uppercase_next_letter) {
-                character = static_cast<char>(
-                    std::toupper(static_cast<unsigned char>(character)));
-                should_uppercase_next_letter = false;
-            }
-        }
-
-        return output;
+class Brief final : public Style {
+public:
+    std::string format(const Exhibit& exhibit) const override {
+        return exhibit.title;
     }
 };
 
-/*****************
-*   FUNCTIONS   *
-*****************/
+class Detailed final : public Style {
+public:
+    std::string format(const Exhibit& exhibit) const override {
+        return exhibit.title + " (room " + std::to_string(exhibit.room) + ")";
+    }
+};
 
-/**
- * @brief Print a title-formatted sample phrase
- *
- * @return Program exit status
- */
+class SignPrinter {
+public:
+    explicit SignPrinter(const Style& style) : style_(&style) {}
+    std::string text(const Exhibit& exhibit) const {
+        return style_->format(exhibit);
+    }
+    void use(const Style& style) {
+        style_ = &style;
+    }
+
+private:
+    [[maybe_unused]] const Style* style_;
+};
+
 int main() {
-    std::unique_ptr<Formatter> formatter = std::make_unique<TitleFormatter>();
-    std::cout << formatter->format(SAMPLE_TEXT) << "\n";
-    return 0;
+    const Brief brief;
+    const Detailed detailed;
+    const Exhibit maps{"Maps", 4};
+    SignPrinter signs(brief), details(detailed);
+    std::cout << signs.text(maps) << '\n' << details.text(maps) << '\n';
+    signs.use(detailed);
+    std::cout << signs.text(maps) << '\n';
+    signs.use(brief);
+    std::cout << signs.text(maps) << '\n';
 }

@@ -1,14 +1,20 @@
-# pattern implementation lab 17
+# Refactoring Capstone Project
 
-Course: Design Patterns in C++
-Module: pattern implementation lab 17
+A classroom kit report counts ready pieces and pieces awaiting repair. The starter counts directly inside main. Move the counting into summarize and have main pass its result to print. Each record contributes its positive quantity to the corresponding category. Keep the supplied ready and repair output identical.
 
-Use the starter folder first. The starter is intentionally incomplete, and the solution shows one clean way to finish the same build after the student has worked through it.
+From either role folder, build and run with a C++20 compiler.
 
-Suggested flow:
-- Read the module brief and identify the core requirement.
-- Complete the TODO markers in the starter implementation.
-- Test at least one custom case beyond the default example.
-- Compare against the solution only after the student has a working draft.
+```sh
+c++ -std=c++20 -Wall -Wextra -pedantic main.cpp -o practice
+./practice
+```
 
-Quick run hint: `c++ -std=c++17 main.cpp -o app && ./app`
+## Checkpoints
+
+The sample combines two Ready rows (2 and 3) and one Repair row (1). Confirm the report stays ready=5 and repair=1. Test an empty input and a zero-quantity row by calling summarize independently from the printer.
+
+## Refactoring Capstone Extension Challenge
+
+After the original two counts are correct, include Retired as a third category. Expose retired in the returned summary and use print’s optional flag to show the third count only when requested. Preserve the ordinary two-line output.
+
+Add three retired pieces and request the extended output. The last line is retired=3 and the original counts remain unchanged. A negative quantity contributes nothing. Run the original output check once again.

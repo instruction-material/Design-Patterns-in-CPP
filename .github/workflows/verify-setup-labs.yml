@@ -83,3 +83,5 @@ jobs:
         run: python3 tests/test_wrapper_boundary_labs.py
       - name: Verify behavior-preserving refactors and capstone extensions
         run: python3 tests/test_refactor_capstone_practice.py
+      - name: Verify the four applied studio projects and their extensions
+        run: python3 tests/test_applied_studio_projects.py

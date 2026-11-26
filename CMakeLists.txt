@@ -138,6 +138,15 @@ add_dpc_lab(dpc_studio_plan_solution "DPC-25-dpc12-capstone-studio-supplemental-
 add_dpc_lab(dpc_service_queue_starter "DPC-26-dpc12-capstone-studio-supplemental-3/starter/main.cpp")
 add_dpc_lab(dpc_service_queue_solution "DPC-26-dpc12-capstone-studio-supplemental-3/solution/main.cpp")
 
+add_dpc_lab(dpc_instrument_bench_starter "DPC-01-pattern-implementation-lab-14/starter/main.cpp")
+add_dpc_lab(dpc_instrument_bench_solution "DPC-01-pattern-implementation-lab-14/solution/main.cpp")
+add_dpc_lab(dpc_sign_strategy_starter "DPC-02-pattern-implementation-lab-15/starter/main.cpp")
+add_dpc_lab(dpc_sign_strategy_solution "DPC-02-pattern-implementation-lab-15/solution/main.cpp")
+add_dpc_lab(dpc_seat_intake_starter "DPC-03-pattern-implementation-lab-16/starter/main.cpp")
+add_dpc_lab(dpc_seat_intake_solution "DPC-03-pattern-implementation-lab-16/solution/main.cpp")
+add_dpc_lab(dpc_kit_report_starter "DPC-04-pattern-implementation-lab-17/starter/main.cpp")
+add_dpc_lab(dpc_kit_report_solution "DPC-04-pattern-implementation-lab-17/solution/main.cpp")
+
 include(CTest)
 if(BUILD_TESTING)
     add_dpc_lab(dpc_dashboard_family_check "tests/dashboard_family.cpp")
