@@ -1,14 +1,14 @@
-# DPC6 Decorator, Adapter, and Facade supplemental 2
+# Structural Wrapper Transfer Practice
 
-Course: Design Patterns in C++
-Module: DPC6 Decorator, Adapter, and Facade supplemental 2
+Wrap a notice sink with a decorator that records the result of each delivery. NoticeSink is the shared interface. A line can be accepted or rejected. Complete TracingSink::deliver so it forwards the original line once, then records one accepted or rejected entry and returns the wrapped sink’s result. This decorator borrows its sink and trace. Keep those objects alive during its use.
 
-Use the starter folder first. The starter is intentionally incomplete, and the solution shows one clean way to finish the same build after the student has worked through it.
+From either role folder, build and run with a C++20 compiler.
 
-Suggested flow:
-- Read the module brief and identify the core requirement.
-- Complete the TODO markers in the starter implementation.
-- Test at least one custom case beyond the default example.
-- Compare against the solution only after the student has a working draft.
+```sh
+c++ -std=c++20 -Wall -Wextra -pedantic main.cpp -o practice
+./practice
+```
 
-Quick run hint: `c++ -std=c++17 main.cpp -o app && ./app`
+## Checkpoints
+
+Deliver an ordinary note and an empty note. The plain sink accepts the first and rejects the second. The trace records both outcomes in order. Try two identical notes and verify that there are two calls and two entries. Compose two decorators around one sink and verify that the real sink still receives only one call per message.

@@ -1,14 +1,14 @@
-# DPC10 Patterns for Resource Management supplemental 2
+# RAII Wrapper Transfer Practice
 
-Course: Design Patterns in C++
-Module: DPC10 Patterns for Resource Management supplemental 2
+An output channel allows one active drawing window. The lease holds a reference to the channel, and the channel must outlive the lease. The constructor already tries to open the channel and stores the result. Implement the destructor so only a lease that acquired the channel closes it. The lease stays in its current scope and cannot be copied or moved.
 
-Use the starter folder first. The starter is intentionally incomplete, and the solution shows one clean way to finish the same build after the student has worked through it.
+From either role folder, build and run with a C++20 compiler.
 
-Suggested flow:
-- Read the module brief and identify the core requirement.
-- Complete the TODO markers in the starter implementation.
-- Test at least one custom case beyond the default example.
-- Compare against the solution only after the student has a working draft.
+```sh
+c++ -std=c++20 -Wall -Wextra -pedantic main.cpp -o practice
+./practice
+```
 
-Quick run hint: `c++ -std=c++17 main.cpp -o app && ./app`
+## Checkpoints
+
+Open one lease and attempt another while the channel is busy. The denied lease owns nothing, and leaving its scope must leave the channel open. Leaving the first lease’s scope closes the channel once. Create a successful lease and throw a simple exception inside that scope. After the catch, check that the channel is available again.

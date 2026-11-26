@@ -1,78 +1,63 @@
-#include <cctype>
 #include <iostream>
-#include <memory>
+#include <map>
+#include <optional>
 #include <string>
+#include <string_view>
+#include <utility>
+#include <vector>
 
-/*****************
-*   CONSTANTS   *
-*****************/
+struct Catalog {
+    std::map<std::string, int, std::less<>> tracks;
+    mutable int lookups = 0;
 
-const std::string SAMPLE_TEXT = "design patterns";
-
-/*************
-*   TYPES   *
-*************/
-
-// Define the formatting strategy interface
-class Formatter {
-  public:
-    virtual ~Formatter() = default;
-
-    /**
-	 * @brief Format the provided input string
-	 *
-	 * @param input Text to format
-	 *
-	 * @return Formatted text
-	 */
-    virtual std::string format(const std::string& input) const = 0;
-};
-
-// Format text by capitalizing the first letter of each word
-class TitleFormatter : public Formatter {
-  public:
-    /**
-	 * @brief Convert input text to title case
-	 *
-	 * @param input Text to format
-	 *
-	 * @return Title-cased text
-	 */
-    std::string format(const std::string& input) const override {
-        std::string output = input;
-        bool should_uppercase_next_letter = true;
-
-        // Visit each character so word starts can be capitalized in place
-        for (char& character : output) {
-            // Spaces make the next non-space character start a new word
-            if (std::isspace(static_cast<unsigned char>(character))) {
-                should_uppercase_next_letter = true;
-                continue;
-            }
-
-            // Capitalize the first character after a word boundary
-            if (should_uppercase_next_letter) {
-                character = static_cast<char>(
-                    std::toupper(static_cast<unsigned char>(character)));
-                should_uppercase_next_letter = false;
-            }
-        }
-
-        return output;
+    std::optional<int> find(std::string_view stop) const {
+        ++lookups;
+        const auto entry = tracks.find(stop);
+        if (entry == tracks.end()) return std::nullopt;
+        return entry->second;
     }
 };
 
-/*****************
-*   FUNCTIONS   *
-*****************/
+struct Player {
+    std::vector<std::pair<int, int>> starts;
 
-/**
- * @brief Print a title-formatted sample phrase
- *
- * @return Program exit status
- */
+    void play(int track, int volume) {
+        starts.emplace_back(track, volume);
+    }
+};
+
+enum class Launch { InvalidVolume, UnknownStop, Started };
+
+class AudioGuide {
+public:
+    AudioGuide(const Catalog& catalog, Player& player)
+        : catalog_(catalog), player_(player) {}
+
+    Launch start(std::string_view stop, int volume) {
+        if (volume < 0 || volume > 100) return Launch::InvalidVolume;
+        const auto id = catalog_.find(stop);
+        if (!id) return Launch::UnknownStop;
+        player_.play(*id, volume);
+        return Launch::Started;
+    }
+
+private:
+    [[maybe_unused]] const Catalog& catalog_;
+    [[maybe_unused]] Player& player_;
+};
+
 int main() {
-    std::unique_ptr<Formatter> formatter = std::make_unique<TitleFormatter>();
-    std::cout << formatter->format(SAMPLE_TEXT) << "\n";
-    return 0;
+    const Catalog catalog{{{"garden", 7}}};
+    Player player;
+    AudioGuide guide(catalog, player);
+    for (const auto& [stop, volume] : std::vector<std::pair<std::string, int>>{
+             {"garden", 50}, {"missing", 50}, {"garden", 110}}) {
+        const auto result = guide.start(stop, volume);
+        switch (result) {
+        case Launch::Started: std::cout << "Started\n"; break;
+        case Launch::UnknownStop: std::cout << "Unknown stop\n"; break;
+        case Launch::InvalidVolume: std::cout << "Invalid volume\n"; break;
+        }
+    }
+    std::cout << "Player starts: " << player.starts.size() << '\n';
 }

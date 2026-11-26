@@ -1,78 +1,51 @@
-#include <cctype>
+#include <algorithm>
 #include <iostream>
-#include <memory>
 #include <string>
+#include <utility>
+#include <vector>
 
-/*****************
-*   CONSTANTS   *
-*****************/
-
-const std::string SAMPLE_TEXT = "design patterns";
-
-/*************
-*   TYPES   *
-*************/
-
-// Define the formatting strategy interface
-class Formatter {
-  public:
-    virtual ~Formatter() = default;
-
-    /**
-	 * @brief Format the provided input string
-	 *
-	 * @param input Text to format
-	 *
-	 * @return Formatted text
-	 */
-    virtual std::string format(const std::string& input) const = 0;
+struct Board {
+    std::vector<std::string> labels;
 };
 
-// Format text by capitalizing the first letter of each word
-class TitleFormatter : public Formatter {
-  public:
-    /**
-	 * @brief Convert input text to title case
-	 *
-	 * @param input Text to format
-	 *
-	 * @return Title-cased text
-	 */
-    std::string format(const std::string& input) const override {
-        std::string output = input;
-        bool should_uppercase_next_letter = true;
+class FrameBatch {
+public:
+    explicit FrameBatch(Board& board) : board_(board) {}
+    FrameBatch(const FrameBatch&) = delete;
+    FrameBatch& operator=(const FrameBatch&) = delete;
 
-        // Visit each character so word starts can be capitalized in place
-        for (char& character : output) {
-            // Spaces make the next non-space character start a new word
-            if (std::isspace(static_cast<unsigned char>(character))) {
-                should_uppercase_next_letter = true;
-                continue;
-            }
-
-            // Capitalize the first character after a word boundary
-            if (should_uppercase_next_letter) {
-                character = static_cast<char>(
-                    std::toupper(static_cast<unsigned char>(character)));
-                should_uppercase_next_letter = false;
-            }
-        }
-
-        return output;
+    bool append(std::string label) {
+        if (finished_) return false;
+        pending_.push_back(std::move(label));
+        return true;
     }
+
+    bool commit() noexcept {
+        if (finished_ || pending_.empty() ||
+            std::ranges::any_of(pending_, [](const std::string& label) { return label.empty(); })) {
+            return false;
+        }
+        board_.labels.swap(pending_);
+        finished_ = true;
+        return true;
+    }
+
+private:
+    [[maybe_unused]] Board& board_;
+    std::vector<std::string> pending_;
+    bool finished_ = false;
 };
 
-/*****************
-*   FUNCTIONS   *
-*****************/
-
-/**
- * @brief Print a title-formatted sample phrase
- *
- * @return Program exit status
- */
 int main() {
-    std::unique_ptr<Formatter> formatter = std::make_unique<TitleFormatter>();
-    std::cout << formatter->format(SAMPLE_TEXT) << "\n";
-    return 0;
+    Board board{{"Original"}};
+    FrameBatch invalid(board);
+    invalid.append("Map");
+    invalid.append("");
+    std::cout << std::boolalpha << invalid.commit() << ' ' << board.labels.front() << '\n';
+    FrameBatch good(board);
+    good.append("Map");
+    good.append("Key");
+    std::cout << good.commit();
+    for (const auto& label : board.labels) std::cout << ' ' << label;
+    std::cout << '\n' << good.commit() << '\n';
 }

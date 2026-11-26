@@ -79,3 +79,5 @@ jobs:
         run: python3 tests/test_composite_traversal.py
       - name: Verify value dispatch, interfaces and ownership transfers
         run: python3 tests/test_value_ownership_labs.py
+      - name: Verify decorators, facade coordination and resource boundaries
+        run: python3 tests/test_wrapper_boundary_labs.py

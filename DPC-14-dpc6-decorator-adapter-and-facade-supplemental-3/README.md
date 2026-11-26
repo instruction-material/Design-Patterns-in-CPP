@@ -1,14 +1,14 @@
-# DPC6 Decorator, Adapter, and Facade supplemental 3
+# Facade Boundary Extension Practice
 
-Course: Design Patterns in C++
-Module: DPC6 Decorator, Adapter, and Facade supplemental 3
+The audio tour facade coordinates a track catalog and a player. The caller gives a stop name and a volume from 0 to 100 inclusive. Implement AudioGuide::start. Reject an invalid volume before searching the catalog. If the name has no track ID, return UnknownStop without calling the player. Otherwise pass the looked-up ID and the requested volume to the player exactly once and return Started.
 
-Use the starter folder first. The starter is intentionally incomplete, and the solution shows one clean way to finish the same build after the student has worked through it.
+From either role folder, build and run with a C++20 compiler.
 
-Suggested flow:
-- Read the module brief and identify the core requirement.
-- Complete the TODO markers in the starter implementation.
-- Test at least one custom case beyond the default example.
-- Compare against the solution only after the student has a working draft.
+```sh
+c++ -std=c++20 -Wall -Wextra -pedantic main.cpp -o practice
+./practice
+```
 
-Quick run hint: `c++ -std=c++17 main.cpp -o app && ./app`
+## Checkpoints
+
+Try the garden at volume 50, an unknown stop and the garden at volume 110. Only the garden at 50 reaches the player. Test the inclusive volume limits of 0 and 100 and check that the same track can start twice. Imagine changing the value stored for the garden. The caller should still pass only the name and volume.

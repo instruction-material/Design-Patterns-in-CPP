@@ -120,6 +120,15 @@ add_dpc_lab(dpc_probe_solution "DPC-05-dpc2-design-foundations-supplemental-2/so
 add_dpc_lab(dpc_slot_starter "DPC-06-dpc2-design-foundations-supplemental-3/starter/main.cpp")
 add_dpc_lab(dpc_slot_solution "DPC-06-dpc2-design-foundations-supplemental-3/solution/main.cpp")
 
+add_dpc_lab(dpc_notice_trace_starter "DPC-13-dpc6-decorator-adapter-and-facade-supplemental-2/starter/main.cpp")
+add_dpc_lab(dpc_notice_trace_solution "DPC-13-dpc6-decorator-adapter-and-facade-supplemental-2/solution/main.cpp")
+add_dpc_lab(dpc_audio_guide_starter "DPC-14-dpc6-decorator-adapter-and-facade-supplemental-3/starter/main.cpp")
+add_dpc_lab(dpc_audio_guide_solution "DPC-14-dpc6-decorator-adapter-and-facade-supplemental-3/solution/main.cpp")
+add_dpc_lab(dpc_channel_lease_starter "DPC-21-dpc10-patterns-for-resource-management-supplemental-2/starter/main.cpp")
+add_dpc_lab(dpc_channel_lease_solution "DPC-21-dpc10-patterns-for-resource-management-supplemental-2/solution/main.cpp")
+add_dpc_lab(dpc_frame_batch_starter "DPC-22-dpc10-patterns-for-resource-management-supplemental-3/starter/main.cpp")
+add_dpc_lab(dpc_frame_batch_solution "DPC-22-dpc10-patterns-for-resource-management-supplemental-3/solution/main.cpp")
+
 include(CTest)
 if(BUILD_TESTING)
     add_dpc_lab(dpc_dashboard_family_check "tests/dashboard_family.cpp")

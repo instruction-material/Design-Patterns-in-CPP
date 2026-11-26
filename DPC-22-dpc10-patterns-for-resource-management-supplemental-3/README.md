@@ -1,14 +1,14 @@
-# DPC10 Patterns for Resource Management supplemental 3
+# Resource Boundary Extension Practice
 
-Course: Design Patterns in C++
-Module: DPC10 Patterns for Resource Management supplemental 3
+A drawing board owns its current labels. A FrameBatch stores proposed changes in a separate vector. Complete commit so it rejects an empty batch or one with an empty label and leaves the board unchanged. When every label is valid, swap the whole batch into the board, then finish the batch. A finished batch rejects another commit and any later append. The board must outlive the batch.
 
-Use the starter folder first. The starter is intentionally incomplete, and the solution shows one clean way to finish the same build after the student has worked through it.
+From either role folder, build and run with a C++20 compiler.
 
-Suggested flow:
-- Read the module brief and identify the core requirement.
-- Complete the TODO markers in the starter implementation.
-- Test at least one custom case beyond the default example.
-- Compare against the solution only after the student has a working draft.
+```sh
+c++ -std=c++20 -Wall -Wextra -pedantic main.cpp -o practice
+./practice
+```
 
-Quick run hint: `c++ -std=c++17 main.cpp -o app && ./app`
+## Checkpoints
+
+Propose a two-label replacement with one empty label and check that the original board remains visible. Use a fresh batch to replace the board with Map and Key. Call commit again and verify the new labels stay in order. Verify that destroying an uncommitted batch also leaves the board unchanged.

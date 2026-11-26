@@ -1,78 +1,56 @@
-#include <cctype>
 #include <iostream>
-#include <memory>
-#include <string>
 
-/*****************
-*   CONSTANTS   *
-*****************/
-
-const std::string SAMPLE_TEXT = "design patterns";
-
-/*************
-*   TYPES   *
-*************/
-
-// Define the formatting strategy interface
-class Formatter {
-  public:
-    virtual ~Formatter() = default;
-
-    /**
-	 * @brief Format the provided input string
-	 *
-	 * @param input Text to format
-	 *
-	 * @return Formatted text
-	 */
-    virtual std::string format(const std::string& input) const = 0;
-};
-
-// Format text by capitalizing the first letter of each word
-class TitleFormatter : public Formatter {
-  public:
-    /**
-	 * @brief Convert input text to title case
-	 *
-	 * @param input Text to format
-	 *
-	 * @return Title-cased text
-	 */
-    std::string format(const std::string& input) const override {
-        std::string output = input;
-        bool should_uppercase_next_letter = true;
-
-        // Visit each character so word starts can be capitalized in place
-        for (char& character : output) {
-            // Spaces make the next non-space character start a new word
-            if (std::isspace(static_cast<unsigned char>(character))) {
-                should_uppercase_next_letter = true;
-                continue;
-            }
-
-            // Capitalize the first character after a word boundary
-            if (should_uppercase_next_letter) {
-                character = static_cast<char>(
-                    std::toupper(static_cast<unsigned char>(character)));
-                should_uppercase_next_letter = false;
-            }
-        }
-
-        return output;
+class OutputChannel {
+public:
+    bool tryOpen() noexcept {
+        if (open_) return false;
+        open_ = true;
+        return true;
     }
+
+    void close() noexcept {
+        open_ = false;
+        ++closes_;
+    }
+
+    bool isOpen() const noexcept { return open_; }
+    int closeCalls() const noexcept { return closes_; }
+
+private:
+    bool open_ = false;
+    int closes_ = 0;
 };
 
-/*****************
-*   FUNCTIONS   *
-*****************/
+class ChannelLease {
+public:
+    explicit ChannelLease(OutputChannel& channel) noexcept
+        : channel_(channel), acquired_(channel.tryOpen()) {}
 
-/**
- * @brief Print a title-formatted sample phrase
- *
- * @return Program exit status
- */
+    ChannelLease(const ChannelLease&) = delete;
+    ChannelLease& operator=(const ChannelLease&) = delete;
+
+    ~ChannelLease() {
+        if (acquired_) channel_.close();
+    }
+
+    bool acquired() const noexcept { return acquired_; }
+
+private:
+    [[maybe_unused]] OutputChannel& channel_;
+    bool acquired_;
+};
+
 int main() {
-    std::unique_ptr<Formatter> formatter = std::make_unique<TitleFormatter>();
-    std::cout << formatter->format(SAMPLE_TEXT) << "\n";
-    return 0;
+    OutputChannel channel;
+    std::cout << std::boolalpha;
+    {
+        const ChannelLease first(channel);
+        {
+            const ChannelLease denied(channel);
+            std::cout << first.acquired() << ' ' << denied.acquired() << '\n';
+        }
+        std::cout << "Open after denial: " << channel.isOpen() << '\n';
+    }
+    std::cout << "Open after owner: " << channel.isOpen() << '\n';
+    std::cout << "Close calls: " << channel.closeCalls() << '\n';
 }

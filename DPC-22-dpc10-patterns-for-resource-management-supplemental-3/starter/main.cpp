@@ -1,22 +1,46 @@
+#include <algorithm>
 #include <iostream>
-#include <memory>
 #include <string>
+#include <utility>
+#include <vector>
 
-class Formatter {
-  public:
-    virtual ~Formatter() = default;
-    virtual std::string format(const std::string& input) const = 0;
+struct Board {
+    std::vector<std::string> labels;
 };
 
-class TitleFormatter : public Formatter {
-  public:
-    std::string format(const std::string& input) const override {
-        // TODO: return a transformed representation.
-        return input;
+class FrameBatch {
+public:
+    explicit FrameBatch(Board& board) : board_(board) {}
+    FrameBatch(const FrameBatch&) = delete;
+    FrameBatch& operator=(const FrameBatch&) = delete;
+
+    bool append(std::string label) {
+        if (finished_) return false;
+        pending_.push_back(std::move(label));
+        return true;
     }
+
+    bool commit() noexcept {
+        // TODO: Validate all pending labels then publish the complete frame.
+        return false;
+    }
+
+private:
+    [[maybe_unused]] Board& board_;
+    std::vector<std::string> pending_;
+    bool finished_ = false;
 };
 
 int main() {
-    std::unique_ptr<Formatter> formatter = std::make_unique<TitleFormatter>();
-    std::cout << formatter->format("design patterns") << "\n";
+    Board board{{"Original"}};
+    FrameBatch invalid(board);
+    invalid.append("Map");
+    invalid.append("");
+    std::cout << std::boolalpha << invalid.commit() << ' ' << board.labels.front() << '\n';
+    FrameBatch good(board);
+    good.append("Map");
+    good.append("Key");
+    std::cout << good.commit();
+    for (const auto& label : board.labels) std::cout << ' ' << label;
+    std::cout << '\n' << good.commit() << '\n';
 }
