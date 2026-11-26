@@ -1,14 +1,14 @@
-# Applied Studio 16: pattern implementation lab 16 supplemental 3
+# Structural Boundary Extension Practice
 
-Course: Design Patterns in C++
-Module: Applied Studio 16: pattern implementation lab 16 supplemental 3
+A catalogue returns either a title or an empty optional for a missing number. Complete Memo::find so repeated lookups for an ID reuse the first result. Cache successful and missing results. The supplied clear operation resets the memo so the next lookup goes back to the catalogue.
 
-Use the starter folder first. The starter is intentionally incomplete, and the solution shows one clean way to finish the same build after the student has worked through it.
+From either role folder, build and run with a C++20 compiler.
 
-Suggested flow:
-- Read the module brief and identify the core requirement.
-- Complete the TODO markers in the starter implementation.
-- Test at least one custom case beyond the default example.
-- Compare against the solution only after the student has a working draft.
+```sh
+c++ -std=c++20 -Wall -Wextra -pedantic main.cpp -o practice
+./practice
+```
 
-Quick run hint: `c++ -std=c++17 main.cpp -o app && ./app`
+## Checkpoints
+
+Read title 7 twice and missing ID 9 twice. Exactly two source calls are needed before clearing. Clear, then read 7 and verify a third source call. Compare a recorded empty title with a missing ID.

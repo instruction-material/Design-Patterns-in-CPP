@@ -1,78 +1,18 @@
-#include <cctype>
+#include <cstddef>
+#include <cstdint>
 #include <iostream>
-#include <memory>
-#include <string>
+#include <vector>
 
-/*****************
-*   CONSTANTS   *
-*****************/
-
-const std::string SAMPLE_TEXT = "design patterns";
-
-/*************
-*   TYPES   *
-*************/
-
-// Define the formatting strategy interface
-class Formatter {
-  public:
-    virtual ~Formatter() = default;
-
-    /**
-	 * @brief Format the provided input string
-	 *
-	 * @param input Text to format
-	 *
-	 * @return Formatted text
-	 */
-    virtual std::string format(const std::string& input) const = 0;
-};
-
-// Format text by capitalizing the first letter of each word
-class TitleFormatter : public Formatter {
-  public:
-    /**
-	 * @brief Convert input text to title case
-	 *
-	 * @param input Text to format
-	 *
-	 * @return Title-cased text
-	 */
-    std::string format(const std::string& input) const override {
-        std::string output = input;
-        bool should_uppercase_next_letter = true;
-
-        // Visit each character so word starts can be capitalized in place
-        for (char& character : output) {
-            // Spaces make the next non-space character start a new word
-            if (std::isspace(static_cast<unsigned char>(character))) {
-                should_uppercase_next_letter = true;
-                continue;
-            }
-
-            // Capitalize the first character after a word boundary
-            if (should_uppercase_next_letter) {
-                character = static_cast<char>(
-                    std::toupper(static_cast<unsigned char>(character)));
-                should_uppercase_next_letter = false;
-            }
-        }
-
-        return output;
+std::vector<std::int64_t> longGaps(const std::vector<int>& minutes, int threshold) {
+    std::vector<std::int64_t> gaps;
+    for (std::size_t i = 1; i < minutes.size(); ++i) {
+        const auto gap = std::int64_t{minutes[i]} - minutes[i-1];
+        if (gap > threshold) gaps.push_back(gap);
     }
-};
+    return gaps;
+}
 
-/*****************
-*   FUNCTIONS   *
-*****************/
-
-/**
- * @brief Print a title-formatted sample phrase
- *
- * @return Program exit status
- */
 int main() {
-    std::unique_ptr<Formatter> formatter = std::make_unique<TitleFormatter>();
-    std::cout << formatter->format(SAMPLE_TEXT) << "\n";
-    return 0;
+    const std::vector<int> times{3, 6, 16, 19};
+    for (const auto gap : longGaps(times, 5)) std::cout << gap << '\n';
 }

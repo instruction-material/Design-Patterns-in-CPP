@@ -1,78 +1,33 @@
-#include <cctype>
+#include <cstdint>
+#include <functional>
 #include <iostream>
-#include <memory>
-#include <string>
+#include <utility>
 
-/*****************
-*   CONSTANTS   *
-*****************/
+using Rule = std::function<int(int)>;
 
-const std::string SAMPLE_TEXT = "design patterns";
+class Session {
+public:
+    explicit Session(Rule rule) : rule_(std::move(rule)) {}
 
-/*************
-*   TYPES   *
-*************/
+    void use(Rule rule) { rule_ = std::move(rule); }
 
-// Define the formatting strategy interface
-class Formatter {
-  public:
-    virtual ~Formatter() = default;
-
-    /**
-	 * @brief Format the provided input string
-	 *
-	 * @param input Text to format
-	 *
-	 * @return Formatted text
-	 */
-    virtual std::string format(const std::string& input) const = 0;
-};
-
-// Format text by capitalizing the first letter of each word
-class TitleFormatter : public Formatter {
-  public:
-    /**
-	 * @brief Convert input text to title case
-	 *
-	 * @param input Text to format
-	 *
-	 * @return Title-cased text
-	 */
-    std::string format(const std::string& input) const override {
-        std::string output = input;
-        bool should_uppercase_next_letter = true;
-
-        // Visit each character so word starts can be capitalized in place
-        for (char& character : output) {
-            // Spaces make the next non-space character start a new word
-            if (std::isspace(static_cast<unsigned char>(character))) {
-                should_uppercase_next_letter = true;
-                continue;
-            }
-
-            // Capitalize the first character after a word boundary
-            if (should_uppercase_next_letter) {
-                character = static_cast<char>(
-                    std::toupper(static_cast<unsigned char>(character)));
-                should_uppercase_next_letter = false;
-            }
-        }
-
-        return output;
+    std::int64_t measure(int value) {
+        total_ += rule_(value);
+        return total_;
     }
+
+private:
+    Rule rule_;
+    std::int64_t total_ = 0;
 };
 
-/*****************
-*   FUNCTIONS   *
-*****************/
-
-/**
- * @brief Print a title-formatted sample phrase
- *
- * @return Program exit status
- */
 int main() {
-    std::unique_ptr<Formatter> formatter = std::make_unique<TitleFormatter>();
-    std::cout << formatter->format(SAMPLE_TEXT) << "\n";
-    return 0;
+    Session session([](int value) { return value; });
+    std::cout << session.measure(3) << '\n';
+    int offset = 2;
+    session.use([offset](int value) { return value + offset; });
+    offset = 9;
+    std::cout << session.measure(3) << '\n';
+    session.use([](int value) { return value; });
+    std::cout << session.measure(1) << '\n';
 }

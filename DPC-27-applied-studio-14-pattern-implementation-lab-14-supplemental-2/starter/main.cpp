@@ -1,22 +1,28 @@
 #include <iostream>
 #include <memory>
 #include <string>
+#include <utility>
 
-class Formatter {
-  public:
-    virtual ~Formatter() = default;
-    virtual std::string format(const std::string& input) const = 0;
+struct Checkout {
+    std::string label;
 };
 
-class TitleFormatter : public Formatter {
-  public:
-    std::string format(const std::string& input) const override {
-        // TODO: return a transformed representation.
-        return input;
+class Display {
+public:
+    explicit Display(std::weak_ptr<const Checkout> loan) : loan_(std::move(loan)) {}
+
+    std::string show() const {
+        return "(returned)"; // TODO: Read a live loan without storing an owner.
     }
+
+private:
+    [[maybe_unused]] std::weak_ptr<const Checkout> loan_;
 };
 
 int main() {
-    std::unique_ptr<Formatter> formatter = std::make_unique<TitleFormatter>();
-    std::cout << formatter->format("design patterns") << "\n";
+    auto loan = std::make_shared<Checkout>(Checkout{"tripod"});
+    const Display display(loan);
+    std::cout << display.show() << '\n' << loan.use_count() << '\n';
+    loan.reset();
+    std::cout << display.show() << '\n';
 }

@@ -1,22 +1,29 @@
+#include <algorithm>
+#include <functional>
 #include <iostream>
-#include <memory>
 #include <string>
+#include <vector>
 
-class Formatter {
-  public:
-    virtual ~Formatter() = default;
-    virtual std::string format(const std::string& input) const = 0;
+struct Job {
+    std::string title;
+    int priority;
 };
 
-class TitleFormatter : public Formatter {
-  public:
-    std::string format(const std::string& input) const override {
-        // TODO: return a transformed representation.
-        return input;
-    }
-};
+using Compare = std::function<bool(const Job&, const Job&)>;
+
+std::vector<Job> ordered(const std::vector<Job>& jobs, const Compare& compare) {
+    (void)compare;
+    return jobs; // TODO: Sort a copy using the requested policy.
+}
+
+void print(const std::vector<Job>& jobs) {
+    for (const auto& job : jobs) std::cout << job.title << ' ';
+    std::cout << '\n';
+}
 
 int main() {
-    std::unique_ptr<Formatter> formatter = std::make_unique<TitleFormatter>();
-    std::cout << formatter->format("design patterns") << "\n";
+    const std::vector<Job> jobs{{"Kim", 2}, {"Ada", 1}, {"Bo", 2}};
+    print(ordered(jobs, [](const Job& a, const Job& b) { return a.title < b.title; }));
+    print(ordered(jobs, [](const Job& a, const Job& b) { return a.priority > b.priority; }));
+    print(jobs);
 }

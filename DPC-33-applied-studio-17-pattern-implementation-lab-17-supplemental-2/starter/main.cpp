@@ -1,22 +1,19 @@
+#include <cstddef>
+#include <cstdint>
 #include <iostream>
-#include <memory>
-#include <string>
+#include <vector>
 
-class Formatter {
-  public:
-    virtual ~Formatter() = default;
-    virtual std::string format(const std::string& input) const = 0;
-};
-
-class TitleFormatter : public Formatter {
-  public:
-    std::string format(const std::string& input) const override {
-        // TODO: return a transformed representation.
-        return input;
-    }
-};
+std::vector<std::int64_t> longGaps(const std::vector<int>& minutes, int threshold) {
+    (void)minutes;
+    (void)threshold;
+    return {}; // TODO: Move gap detection here.
+}
 
 int main() {
-    std::unique_ptr<Formatter> formatter = std::make_unique<TitleFormatter>();
-    std::cout << formatter->format("design patterns") << "\n";
+    const std::vector<int> times{3, 6, 16, 19};
+    // Legacy report. Replace the inline scan with a call to longGaps.
+    for (std::size_t i = 1; i < times.size(); ++i) {
+        const auto gap = std::int64_t{times[i]} - times[i-1];
+        if (gap > 5) std::cout << gap << '\n';
+    }
 }

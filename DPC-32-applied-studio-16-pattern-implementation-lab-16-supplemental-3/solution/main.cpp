@@ -1,78 +1,45 @@
-#include <cctype>
 #include <iostream>
-#include <memory>
+#include <map>
+#include <optional>
 #include <string>
 
-/*****************
-*   CONSTANTS   *
-*****************/
+struct Catalogue {
+    std::map<int, std::string> titles;
+    int calls = 0;
 
-const std::string SAMPLE_TEXT = "design patterns";
-
-/*************
-*   TYPES   *
-*************/
-
-// Define the formatting strategy interface
-class Formatter {
-  public:
-    virtual ~Formatter() = default;
-
-    /**
-	 * @brief Format the provided input string
-	 *
-	 * @param input Text to format
-	 *
-	 * @return Formatted text
-	 */
-    virtual std::string format(const std::string& input) const = 0;
-};
-
-// Format text by capitalizing the first letter of each word
-class TitleFormatter : public Formatter {
-  public:
-    /**
-	 * @brief Convert input text to title case
-	 *
-	 * @param input Text to format
-	 *
-	 * @return Title-cased text
-	 */
-    std::string format(const std::string& input) const override {
-        std::string output = input;
-        bool should_uppercase_next_letter = true;
-
-        // Visit each character so word starts can be capitalized in place
-        for (char& character : output) {
-            // Spaces make the next non-space character start a new word
-            if (std::isspace(static_cast<unsigned char>(character))) {
-                should_uppercase_next_letter = true;
-                continue;
-            }
-
-            // Capitalize the first character after a word boundary
-            if (should_uppercase_next_letter) {
-                character = static_cast<char>(
-                    std::toupper(static_cast<unsigned char>(character)));
-                should_uppercase_next_letter = false;
-            }
-        }
-
-        return output;
+    std::optional<std::string> find(int id) {
+        ++calls;
+        auto found = titles.find(id);
+        if (found == titles.end()) return {};
+        return found->second;
     }
 };
 
-/*****************
-*   FUNCTIONS   *
-*****************/
+class Memo {
+public:
+    explicit Memo(Catalogue& source) : source_(source) {}
 
-/**
- * @brief Print a title-formatted sample phrase
- *
- * @return Program exit status
- */
+    std::optional<std::string> find(int id) {
+        const auto saved = cache_.find(id);
+        if (saved != cache_.end()) return saved->second;
+        const auto title = source_.find(id);
+        cache_.emplace(id, title);
+        return title;
+    }
+
+    void clear() { cache_.clear(); }
+
+private:
+    Catalogue& source_;
+    std::map<int, std::optional<std::string>> cache_;
+};
+
 int main() {
-    std::unique_ptr<Formatter> formatter = std::make_unique<TitleFormatter>();
-    std::cout << formatter->format(SAMPLE_TEXT) << "\n";
-    return 0;
+    Catalogue source{{{7, "Gallery"}}};
+    Memo memo(source);
+    for (int id : {7, 7, 9, 9}) std::cout << memo.find(id).value_or("(missing)") << '\n';
+    std::cout << "Calls: " << source.calls << '\n';
+    memo.clear();
+    memo.find(7);
+    std::cout << "Calls: " << source.calls << '\n';
 }

@@ -1,78 +1,27 @@
-#include <cctype>
+#include <iomanip>
 #include <iostream>
-#include <memory>
 #include <string>
 
-/*****************
-*   CONSTANTS   *
-*****************/
-
-const std::string SAMPLE_TEXT = "design patterns";
-
-/*************
-*   TYPES   *
-*************/
-
-// Define the formatting strategy interface
-class Formatter {
-  public:
-    virtual ~Formatter() = default;
-
-    /**
-	 * @brief Format the provided input string
-	 *
-	 * @param input Text to format
-	 *
-	 * @return Formatted text
-	 */
-    virtual std::string format(const std::string& input) const = 0;
+struct Cut {
+    std::string label;
+    double centimetres;
 };
 
-// Format text by capitalizing the first letter of each word
-class TitleFormatter : public Formatter {
-  public:
-    /**
-	 * @brief Convert input text to title case
-	 *
-	 * @param input Text to format
-	 *
-	 * @return Title-cased text
-	 */
-    std::string format(const std::string& input) const override {
-        std::string output = input;
-        bool should_uppercase_next_letter = true;
-
-        // Visit each character so word starts can be capitalized in place
-        for (char& character : output) {
-            // Spaces make the next non-space character start a new word
-            if (std::isspace(static_cast<unsigned char>(character))) {
-                should_uppercase_next_letter = true;
-                continue;
-            }
-
-            // Capitalize the first character after a word boundary
-            if (should_uppercase_next_letter) {
-                character = static_cast<char>(
-                    std::toupper(static_cast<unsigned char>(character)));
-                should_uppercase_next_letter = false;
-            }
-        }
-
-        return output;
-    }
+struct InchCut {
+    std::string label;
+    double inches;
 };
 
-/*****************
-*   FUNCTIONS   *
-*****************/
+Cut normalize(const InchCut& input) {
+    return {input.label, input.inches * 2.54};
+}
 
-/**
- * @brief Print a title-formatted sample phrase
- *
- * @return Program exit status
- */
+void print(const Cut& item) {
+    std::cout << item.label << ": " << std::fixed << std::setprecision(2)
+              << item.centimetres << " cm\n";
+}
+
 int main() {
-    std::unique_ptr<Formatter> formatter = std::make_unique<TitleFormatter>();
-    std::cout << formatter->format(SAMPLE_TEXT) << "\n";
-    return 0;
+    print({"Shelf", 25.4});
+    print(normalize({"Door", 10.0}));
 }

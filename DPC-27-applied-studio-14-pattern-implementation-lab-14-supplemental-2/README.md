@@ -1,14 +1,14 @@
-# Applied Studio 14: pattern implementation lab 14 supplemental 2
+# Ownership Refactor Transfer Practice
 
-Course: Design Patterns in C++
-Module: Applied Studio 14: pattern implementation lab 14 supplemental 2
+An equipment desk owns a checkout record for the duration of a loan. A display receives a weak pointer so it can show the current record without owning it. Complete Display::show. Lock the weak pointer to read a live label and return "(returned)" when no record is live. Keep the owning handle local to the call.
 
-Use the starter folder first. The starter is intentionally incomplete, and the solution shows one clean way to finish the same build after the student has worked through it.
+From either role folder, build and run with a C++20 compiler.
 
-Suggested flow:
-- Read the module brief and identify the core requirement.
-- Complete the TODO markers in the starter implementation.
-- Test at least one custom case beyond the default example.
-- Compare against the solution only after the student has a working draft.
+```sh
+c++ -std=c++20 -Wall -Wextra -pedantic main.cpp -o practice
+./practice
+```
 
-Quick run hint: `c++ -std=c++17 main.cpp -o app && ./app`
+## Checkpoints
+
+Display a live tripod checkout, then reset the desk’s owning pointer. The display changes to "(returned)". Verify the owner count is one after show returns. Construct an empty display and verify it also reports "(returned)".

@@ -1,14 +1,14 @@
-# Applied Studio 15: pattern implementation lab 15 supplemental 3
+# Runtime Variation Extension Practice
 
-Course: Design Patterns in C++
-Module: Applied Studio 15: pattern implementation lab 15 supplemental 3
+A calibration session keeps caller-supplied rules as function objects. The session borrows no rule. Complete measure so it adds the active rule’s result to the stored total and returns the updated total. A replacement rule applies to future measurements. It leaves the accumulated total intact.
 
-Use the starter folder first. The starter is intentionally incomplete, and the solution shows one clean way to finish the same build after the student has worked through it.
+From either role folder, build and run with a C++20 compiler.
 
-Suggested flow:
-- Read the module brief and identify the core requirement.
-- Complete the TODO markers in the starter implementation.
-- Test at least one custom case beyond the default example.
-- Compare against the solution only after the student has a working draft.
+```sh
+c++ -std=c++20 -Wall -Wextra -pedantic main.cpp -o practice
+./practice
+```
 
-Quick run hint: `c++ -std=c++17 main.cpp -o app && ./app`
+## Checkpoints
+
+Start with the identity rule and measure 3. Replace the rule with one that adds 2 and measure 3 again. The totals are 3 and 8. Change the original offset variable after creating the replacement rule to verify it was captured by value. Swap back to identity and verify the total continues from 8.

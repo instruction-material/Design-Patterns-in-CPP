@@ -1,14 +1,14 @@
-# Applied Studio 16: pattern implementation lab 16 supplemental 2
+# Structural Boundary Transfer Practice
 
-Course: Design Patterns in C++
-Module: Applied Studio 16: pattern implementation lab 16 supplemental 2
+A cutting list records pieces in centimetres. An older catalogue uses inches. Complete the InchCut adapter so it returns the same Cut structure as the metric path, preserves the label, and multiplies inches by 2.54. The report reads only normalized cuts.
 
-Use the starter folder first. The starter is intentionally incomplete, and the solution shows one clean way to finish the same build after the student has worked through it.
+From either role folder, build and run with a C++20 compiler.
 
-Suggested flow:
-- Read the module brief and identify the core requirement.
-- Complete the TODO markers in the starter implementation.
-- Test at least one custom case beyond the default example.
-- Compare against the solution only after the student has a working draft.
+```sh
+c++ -std=c++20 -Wall -Wextra -pedantic main.cpp -o practice
+./practice
+```
 
-Quick run hint: `c++ -std=c++17 main.cpp -o app && ./app`
+## Checkpoints
+
+The reference reports the metric Shelf (25.4 cm) and the ten-inch Door (25.4 cm) through one report function. Compare zero inches, half an inch and a larger value using a numeric tolerance. Keep unit conversion out of the report.

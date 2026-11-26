@@ -1,22 +1,21 @@
 #include <iostream>
-#include <memory>
+#include <set>
 #include <string>
 
-class Formatter {
-  public:
-    virtual ~Formatter() = default;
-    virtual std::string format(const std::string& input) const = 0;
+struct Revision {
+    std::set<std::string> topics;
 };
 
-class TitleFormatter : public Formatter {
-  public:
-    std::string format(const std::string& input) const override {
-        // TODO: return a transformed representation.
-        return input;
-    }
-};
+Revision combined(const Revision& left, const Revision& right) {
+    (void)right;
+    return left; // TODO: Add the second revision’s topics to a copy.
+}
+
+void print(const Revision& revision) {
+    for (const auto& label : revision.topics) std::cout << label << '\n';
+}
 
 int main() {
-    std::unique_ptr<Formatter> formatter = std::make_unique<TitleFormatter>();
-    std::cout << formatter->format("design patterns") << "\n";
+    const Revision first{{"draft", "map"}}, second{{"map", "review"}};
+    print(combined(first, second));
 }

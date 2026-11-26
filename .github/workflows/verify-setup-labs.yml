@@ -85,3 +85,5 @@ jobs:
         run: python3 tests/test_refactor_capstone_practice.py
       - name: Verify the four applied studio projects and their extensions
         run: python3 tests/test_applied_studio_projects.py
+      - name: Verify final applied studio transfer and extension practice
+        run: python3 tests/test_final_studio_practice.py

@@ -1,14 +1,14 @@
-# Applied Studio 14: pattern implementation lab 14 supplemental 3
+# Ownership Refactor Extension Practice
 
-Course: Design Patterns in C++
-Module: Applied Studio 14: pattern implementation lab 14 supplemental 3
+A palette exposes a dynamically allocated array through Buffer, a unique pointer with a custom deleter. Implement open so a nonzero size produces a zero-initialized int array paired with CountRelease. A zero size yields an empty Buffer. The release counter must outlive every buffer.
 
-Use the starter folder first. The starter is intentionally incomplete, and the solution shows one clean way to finish the same build after the student has worked through it.
+From either role folder, build and run with a C++20 compiler.
 
-Suggested flow:
-- Read the module brief and identify the core requirement.
-- Complete the TODO markers in the starter implementation.
-- Test at least one custom case beyond the default example.
-- Compare against the solution only after the student has a working draft.
+```sh
+c++ -std=c++20 -Wall -Wextra -pedantic main.cpp -o practice
+./practice
+```
 
-Quick run hint: `c++ -std=c++17 main.cpp -o app && ./app`
+## Checkpoints
+
+Write a value to a three-slot buffer and move it into another handle. The moved-from handle becomes empty. Reset only the new owner and verify the counter increments once. Destroy an empty buffer and test a second independently allocated buffer.

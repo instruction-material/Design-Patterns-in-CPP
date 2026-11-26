@@ -1,14 +1,14 @@
-# Applied Studio 17: pattern implementation lab 17 supplemental 2
+# Refactoring Capstone Transfer Practice
 
-Course: Design Patterns in C++
-Module: Applied Studio 17: pattern implementation lab 17 supplemental 2
+A schedule lists nondecreasing appointment minutes. Extract longGaps from the existing console loop. Return each consecutive gap that strictly exceeds the supplied threshold, in chronological order. An empty or one-appointment schedule produces no gaps. Keep the original console report unchanged.
 
-Use the starter folder first. The starter is intentionally incomplete, and the solution shows one clean way to finish the same build after the student has worked through it.
+From either role folder, build and run with a C++20 compiler.
 
-Suggested flow:
-- Read the module brief and identify the core requirement.
-- Complete the TODO markers in the starter implementation.
-- Test at least one custom case beyond the default example.
-- Compare against the solution only after the student has a working draft.
+```sh
+c++ -std=c++20 -Wall -Wextra -pedantic main.cpp -o practice
+./practice
+```
 
-Quick run hint: `c++ -std=c++17 main.cpp -o app && ./app`
+## Checkpoints
+
+For minutes 3, 6, 16 and 19 at threshold 5, the report is 10. At threshold 10 no gap qualifies. At threshold 2 the returned vector is 3, 10, 3. Try repeated minutes and verify the original schedule is unchanged.

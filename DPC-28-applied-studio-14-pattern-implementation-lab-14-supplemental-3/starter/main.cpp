@@ -1,22 +1,30 @@
+#include <cstddef>
 #include <iostream>
 #include <memory>
-#include <string>
+#include <utility>
 
-class Formatter {
-  public:
-    virtual ~Formatter() = default;
-    virtual std::string format(const std::string& input) const = 0;
-};
+struct CountRelease {
+    int& releases;
 
-class TitleFormatter : public Formatter {
-  public:
-    std::string format(const std::string& input) const override {
-        // TODO: return a transformed representation.
-        return input;
+    void operator()(int* value) const noexcept {
+        delete[] value;
+        ++releases;
     }
 };
 
+using Buffer = std::unique_ptr<int[], CountRelease>;
+
+Buffer open(std::size_t size, int& releases) {
+    (void)size;
+    return Buffer(nullptr, CountRelease{releases}); // TODO: Allocate the array.
+}
+
 int main() {
-    std::unique_ptr<Formatter> formatter = std::make_unique<TitleFormatter>();
-    std::cout << formatter->format("design patterns") << "\n";
+    int releases = 0;
+    auto palette = open(3, releases);
+    if (palette) palette[1] = 7;
+    auto moved = std::move(palette);
+    std::cout << (moved ? moved[1] : -1) << ' ' << std::boolalpha << !palette << '\n';
+    moved.reset();
+    std::cout << releases << '\n';
 }

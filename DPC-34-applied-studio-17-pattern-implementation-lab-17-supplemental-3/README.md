@@ -1,14 +1,14 @@
-# Applied Studio 17: pattern implementation lab 17 supplemental 3
+# Refactoring Capstone Extension Practice
 
-Course: Design Patterns in C++
-Module: Applied Studio 17: pattern implementation lab 17 supplemental 3
+A document revision owns a sorted set of topic labels. Implement combined so it returns a fresh revision containing the union of both inputs. A label appears once even if both revisions contain it. Leave both inputs unchanged and keep reporting separate from the merge.
 
-Use the starter folder first. The starter is intentionally incomplete, and the solution shows one clean way to finish the same build after the student has worked through it.
+From either role folder, build and run with a C++20 compiler.
 
-Suggested flow:
-- Read the module brief and identify the core requirement.
-- Complete the TODO markers in the starter implementation.
-- Test at least one custom case beyond the default example.
-- Compare against the solution only after the student has a working draft.
+```sh
+c++ -std=c++20 -Wall -Wextra -pedantic main.cpp -o practice
+./practice
+```
 
-Quick run hint: `c++ -std=c++17 main.cpp -o app && ./app`
+## Checkpoints
+
+Merge draft and map with map and review. The result prints draft, map, review in order. Reversing the inputs gives the same labels. Merge with an empty revision and confirm that the input’s labels are preserved.

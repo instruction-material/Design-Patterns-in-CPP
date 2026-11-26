@@ -1,78 +1,30 @@
-#include <cctype>
+#include <algorithm>
+#include <functional>
 #include <iostream>
-#include <memory>
 #include <string>
+#include <vector>
 
-/*****************
-*   CONSTANTS   *
-*****************/
-
-const std::string SAMPLE_TEXT = "design patterns";
-
-/*************
-*   TYPES   *
-*************/
-
-// Define the formatting strategy interface
-class Formatter {
-  public:
-    virtual ~Formatter() = default;
-
-    /**
-	 * @brief Format the provided input string
-	 *
-	 * @param input Text to format
-	 *
-	 * @return Formatted text
-	 */
-    virtual std::string format(const std::string& input) const = 0;
+struct Job {
+    std::string title;
+    int priority;
 };
 
-// Format text by capitalizing the first letter of each word
-class TitleFormatter : public Formatter {
-  public:
-    /**
-	 * @brief Convert input text to title case
-	 *
-	 * @param input Text to format
-	 *
-	 * @return Title-cased text
-	 */
-    std::string format(const std::string& input) const override {
-        std::string output = input;
-        bool should_uppercase_next_letter = true;
+using Compare = std::function<bool(const Job&, const Job&)>;
 
-        // Visit each character so word starts can be capitalized in place
-        for (char& character : output) {
-            // Spaces make the next non-space character start a new word
-            if (std::isspace(static_cast<unsigned char>(character))) {
-                should_uppercase_next_letter = true;
-                continue;
-            }
+std::vector<Job> ordered(const std::vector<Job>& jobs, const Compare& compare) {
+    auto result = jobs;
+    std::stable_sort(result.begin(), result.end(), compare);
+    return result;
+}
 
-            // Capitalize the first character after a word boundary
-            if (should_uppercase_next_letter) {
-                character = static_cast<char>(
-                    std::toupper(static_cast<unsigned char>(character)));
-                should_uppercase_next_letter = false;
-            }
-        }
+void print(const std::vector<Job>& jobs) {
+    for (const auto& job : jobs) std::cout << job.title << ' ';
+    std::cout << '\n';
+}
 
-        return output;
-    }
-};
-
-/*****************
-*   FUNCTIONS   *
-*****************/
-
-/**
- * @brief Print a title-formatted sample phrase
- *
- * @return Program exit status
- */
 int main() {
-    std::unique_ptr<Formatter> formatter = std::make_unique<TitleFormatter>();
-    std::cout << formatter->format(SAMPLE_TEXT) << "\n";
-    return 0;
+    const std::vector<Job> jobs{{"Kim", 2}, {"Ada", 1}, {"Bo", 2}};
+    print(ordered(jobs, [](const Job& a, const Job& b) { return a.title < b.title; }));
+    print(ordered(jobs, [](const Job& a, const Job& b) { return a.priority > b.priority; }));
+    print(jobs);
 }
