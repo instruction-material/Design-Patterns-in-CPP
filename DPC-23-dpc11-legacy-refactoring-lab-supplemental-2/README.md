@@ -1,14 +1,14 @@
-# DPC11 Legacy Refactoring Lab supplemental 2
+# Legacy Refactor Transfer Practice
 
-Course: Design Patterns in C++
-Module: DPC11 Legacy Refactoring Lab supplemental 2
+The workshop charges daily fees for late loans. The existing function has the default rates written in two branches. Build the starter and record the two default totals. Refactor feeFor so the Fees value supplied by the caller is the only source of rates and negative late days count as zero. Use an integer total in cents.
 
-Use the starter folder first. The starter is intentionally incomplete, and the solution shows one clean way to finish the same build after the student has worked through it.
+From either role folder, build and run with a C++20 compiler.
 
-Suggested flow:
-- Read the module brief and identify the core requirement.
-- Complete the TODO markers in the starter implementation.
-- Test at least one custom case beyond the default example.
-- Compare against the solution only after the student has a working draft.
+```sh
+c++ -std=c++20 -Wall -Wextra -pedantic main.cpp -o practice
+./practice
+```
 
-Quick run hint: `c++ -std=c++17 main.cpp -o app && ./app`
+## Checkpoints
+
+An ordinary loan at two late days costs 150 cents by default. An oversize loan at one late day costs 200 cents. Use 25 and 50 cents as alternate daily rates and verify that the same requests cost 50 and 50. On-time and early returns both cost zero. Explain which behavior the refactor preserves and which result changes only when the caller supplies new rates.

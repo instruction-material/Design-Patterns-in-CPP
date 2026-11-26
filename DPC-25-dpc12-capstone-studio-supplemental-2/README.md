@@ -1,14 +1,14 @@
-# DPC12 Capstone Studio supplemental 2
+# Capstone Architecture Transfer Practice
 
-Course: Design Patterns in C++
-Module: DPC12 Capstone Studio supplemental 2
+A studio planner takes an ordered list of proposed tasks and a minute budget. Complete buildPlan as a function that returns the selected titles and total minutes. Ignore tasks with nonpositive durations. Keep positive-duration tasks in input order and stop at the first one that cannot fit. A task that exactly fills the available time fits. Keep all display code in print.
 
-Use the starter folder first. The starter is intentionally incomplete, and the solution shows one clean way to finish the same build after the student has worked through it.
+From either role folder, build and run with a C++20 compiler.
 
-Suggested flow:
-- Read the module brief and identify the core requirement.
-- Complete the TODO markers in the starter implementation.
-- Test at least one custom case beyond the default example.
-- Compare against the solution only after the student has a working draft.
+```sh
+c++ -std=c++20 -Wall -Wextra -pedantic main.cpp -o practice
+./practice
+```
 
-Quick run hint: `c++ -std=c++17 main.cpp -o app && ./app`
+## Checkpoints
+
+For tasks of 15, 20 and 10 minutes and a 35-minute budget, the first two tasks fit. At 19 minutes, only the first fits. At 10 minutes, stop at the first task, even though a later task would fit. Try a zero budget, an empty list and a task with a negative estimate. Verify the result by calling buildPlan without capturing console output.

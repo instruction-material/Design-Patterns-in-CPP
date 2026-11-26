@@ -1,22 +1,30 @@
 #include <iostream>
-#include <memory>
 #include <string>
+#include <vector>
 
-class Formatter {
-  public:
-    virtual ~Formatter() = default;
-    virtual std::string format(const std::string& input) const = 0;
+struct Task {
+    std::string title;
+    int minutes;
 };
 
-class TitleFormatter : public Formatter {
-  public:
-    std::string format(const std::string& input) const override {
-        // TODO: return a transformed representation.
-        return input;
-    }
+struct Plan {
+    std::vector<std::string> titles;
+    int spent = 0;
 };
+
+Plan buildPlan(const std::vector<Task>& tasks, int budget) {
+    // TODO: Select the tasks within budget without printing in this function.
+    (void)tasks;
+    (void)budget;
+    return {};
+}
+
+void print(const Plan& plan) {
+    for (const auto& title : plan.titles) std::cout << title << '\n';
+    std::cout << "Minutes: " << plan.spent << '\n';
+}
 
 int main() {
-    std::unique_ptr<Formatter> formatter = std::make_unique<TitleFormatter>();
-    std::cout << formatter->format("design patterns") << "\n";
+    const std::vector<Task> tasks{{"Sketch", 15}, {"Assemble", 20}, {"Pack", 10}};
+    print(buildPlan(tasks, 35));
 }

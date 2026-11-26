@@ -1,78 +1,35 @@
-#include <cctype>
 #include <iostream>
-#include <memory>
 #include <string>
+#include <vector>
 
-/*****************
-*   CONSTANTS   *
-*****************/
-
-const std::string SAMPLE_TEXT = "design patterns";
-
-/*************
-*   TYPES   *
-*************/
-
-// Define the formatting strategy interface
-class Formatter {
-  public:
-    virtual ~Formatter() = default;
-
-    /**
-	 * @brief Format the provided input string
-	 *
-	 * @param input Text to format
-	 *
-	 * @return Formatted text
-	 */
-    virtual std::string format(const std::string& input) const = 0;
+struct Task {
+    std::string title;
+    int minutes;
 };
 
-// Format text by capitalizing the first letter of each word
-class TitleFormatter : public Formatter {
-  public:
-    /**
-	 * @brief Convert input text to title case
-	 *
-	 * @param input Text to format
-	 *
-	 * @return Title-cased text
-	 */
-    std::string format(const std::string& input) const override {
-        std::string output = input;
-        bool should_uppercase_next_letter = true;
+struct Plan {
+    std::vector<std::string> titles;
+    int spent = 0;
+};
 
-        // Visit each character so word starts can be capitalized in place
-        for (char& character : output) {
-            // Spaces make the next non-space character start a new word
-            if (std::isspace(static_cast<unsigned char>(character))) {
-                should_uppercase_next_letter = true;
-                continue;
-            }
-
-            // Capitalize the first character after a word boundary
-            if (should_uppercase_next_letter) {
-                character = static_cast<char>(
-                    std::toupper(static_cast<unsigned char>(character)));
-                should_uppercase_next_letter = false;
-            }
-        }
-
-        return output;
+Plan buildPlan(const std::vector<Task>& tasks, int budget) {
+    Plan plan;
+    if (budget <= 0) return plan;
+    for (const auto& task : tasks) {
+        if (task.minutes <= 0) continue;
+        if (task.minutes > budget - plan.spent) break;
+        plan.titles.push_back(task.title);
+        plan.spent += task.minutes;
     }
-};
+    return plan;
+}
 
-/*****************
-*   FUNCTIONS   *
-*****************/
+void print(const Plan& plan) {
+    for (const auto& title : plan.titles) std::cout << title << '\n';
+    std::cout << "Minutes: " << plan.spent << '\n';
+}
 
-/**
- * @brief Print a title-formatted sample phrase
- *
- * @return Program exit status
- */
 int main() {
-    std::unique_ptr<Formatter> formatter = std::make_unique<TitleFormatter>();
-    std::cout << formatter->format(SAMPLE_TEXT) << "\n";
-    return 0;
+    const std::vector<Task> tasks{{"Sketch", 15}, {"Assemble", 20}, {"Pack", 10}};
+    print(buildPlan(tasks, 35));
 }

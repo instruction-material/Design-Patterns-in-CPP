@@ -1,14 +1,14 @@
-# DPC11 Legacy Refactoring Lab supplemental 3
+# Raw Pointer Refactor Extension Practice
 
-Course: Design Patterns in C++
-Module: DPC11 Legacy Refactoring Lab supplemental 3
+The preview function allocates a receipt and passes the owning pointer back to its caller. The caller adopts it immediately with a unique pointer. Replace that API with a value return and update the caller to print the value directly. A receipt is a snapshot of the booking title and seat count, valid independently of what happens to the booking.
 
-Use the starter folder first. The starter is intentionally incomplete, and the solution shows one clean way to finish the same build after the student has worked through it.
+From either role folder, build and run with a C++20 compiler.
 
-Suggested flow:
-- Read the module brief and identify the core requirement.
-- Complete the TODO markers in the starter implementation.
-- Test at least one custom case beyond the default example.
-- Compare against the solution only after the student has a working draft.
+```sh
+c++ -std=c++20 -Wall -Wextra -pedantic main.cpp -o practice
+./practice
+```
 
-Quick run hint: `c++ -std=c++17 main.cpp -o app && ./app`
+## Checkpoints
+
+Both versions print Morning drawing: 2. Keep one receipt, change the booking title and seat count, and make a second receipt. The original still shows the original title and 2 seats. Draw the lifetime of the booking and both receipt variables. Verify that the revised function returns Receipt by value.

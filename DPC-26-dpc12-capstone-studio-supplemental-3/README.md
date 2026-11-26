@@ -1,14 +1,14 @@
-# DPC12 Capstone Studio supplemental 3
+# Capstone Extension Practice
 
-Course: Design Patterns in C++
-Module: DPC12 Capstone Studio supplemental 3
+The supply desk records requests by ID in arrival order. Extend submit to put an urgent request ahead of every ordinary request while maintaining arrival order within each group. An ID already in the queue is rejected and keeps its original position and priority. Work on the queue operation while leaving the display code unchanged.
 
-Use the starter folder first. The starter is intentionally incomplete, and the solution shows one clean way to finish the same build after the student has worked through it.
+From either role folder, build and run with a C++20 compiler.
 
-Suggested flow:
-- Read the module brief and identify the core requirement.
-- Complete the TODO markers in the starter implementation.
-- Test at least one custom case beyond the default example.
-- Compare against the solution only after the student has a working draft.
+```sh
+c++ -std=c++20 -Wall -Wextra -pedantic main.cpp -o practice
+./practice
+```
 
-Quick run hint: `c++ -std=c++17 main.cpp -o app && ./app`
+## Checkpoints
+
+Submit ordinary A, urgent B, ordinary C and urgent D. The result is B, D, A, C. Submit urgent A again and verify it returns false and the order stays fixed. Try an all-ordinary queue and an all-urgent queue and check that each keeps its original arrival order. Explain where the new insertion rule lives and how the existing duplicate rule still applies.

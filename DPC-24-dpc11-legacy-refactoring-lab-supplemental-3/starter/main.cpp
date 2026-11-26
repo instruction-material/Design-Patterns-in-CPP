@@ -2,21 +2,27 @@
 #include <memory>
 #include <string>
 
-class Formatter {
-  public:
-    virtual ~Formatter() = default;
-    virtual std::string format(const std::string& input) const = 0;
+struct Booking {
+    std::string title;
+    int seats;
 };
 
-class TitleFormatter : public Formatter {
-  public:
-    std::string format(const std::string& input) const override {
-        // TODO: return a transformed representation.
-        return input;
-    }
+struct Receipt {
+    std::string title;
+    int seats;
 };
+
+// The caller owns this pointer. TODO: Return a snapshot value instead.
+Receipt* preview(const Booking& booking) {
+    return new Receipt{booking.title, booking.seats};
+}
+
+void print(const Receipt& receipt) {
+    std::cout << receipt.title << ": " << receipt.seats << '\n';
+}
 
 int main() {
-    std::unique_ptr<Formatter> formatter = std::make_unique<TitleFormatter>();
-    std::cout << formatter->format("design patterns") << "\n";
+    const Booking booking{"Morning drawing", 2};
+    const std::unique_ptr<Receipt> receipt(preview(booking));
+    print(*receipt);
 }

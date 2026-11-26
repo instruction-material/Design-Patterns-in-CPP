@@ -1,78 +1,24 @@
-#include <cctype>
+#include <cstdint>
 #include <iostream>
-#include <memory>
-#include <string>
 
-/*****************
-*   CONSTANTS   *
-*****************/
+enum class Loan { Ordinary, Oversize };
 
-const std::string SAMPLE_TEXT = "design patterns";
-
-/*************
-*   TYPES   *
-*************/
-
-// Define the formatting strategy interface
-class Formatter {
-  public:
-    virtual ~Formatter() = default;
-
-    /**
-	 * @brief Format the provided input string
-	 *
-	 * @param input Text to format
-	 *
-	 * @return Formatted text
-	 */
-    virtual std::string format(const std::string& input) const = 0;
+struct Fees {
+    int ordinary = 75;
+    int oversize = 200;
 };
 
-// Format text by capitalizing the first letter of each word
-class TitleFormatter : public Formatter {
-  public:
-    /**
-	 * @brief Convert input text to title case
-	 *
-	 * @param input Text to format
-	 *
-	 * @return Title-cased text
-	 */
-    std::string format(const std::string& input) const override {
-        std::string output = input;
-        bool should_uppercase_next_letter = true;
+std::int64_t feeFor(Loan loan, int lateDays, [[maybe_unused]] const Fees& fees) {
+    if (lateDays <= 0) return 0;
+    const int rate = loan == Loan::Ordinary ? fees.ordinary : fees.oversize;
+    return std::int64_t{rate} * lateDays;
+}
 
-        // Visit each character so word starts can be capitalized in place
-        for (char& character : output) {
-            // Spaces make the next non-space character start a new word
-            if (std::isspace(static_cast<unsigned char>(character))) {
-                should_uppercase_next_letter = true;
-                continue;
-            }
-
-            // Capitalize the first character after a word boundary
-            if (should_uppercase_next_letter) {
-                character = static_cast<char>(
-                    std::toupper(static_cast<unsigned char>(character)));
-                should_uppercase_next_letter = false;
-            }
-        }
-
-        return output;
-    }
-};
-
-/*****************
-*   FUNCTIONS   *
-*****************/
-
-/**
- * @brief Print a title-formatted sample phrase
- *
- * @return Program exit status
- */
 int main() {
-    std::unique_ptr<Formatter> formatter = std::make_unique<TitleFormatter>();
-    std::cout << formatter->format(SAMPLE_TEXT) << "\n";
-    return 0;
+    const Fees defaults;
+    const Fees eventRates{25, 50};
+    for (const auto fees : {defaults, eventRates}) {
+        std::cout << feeFor(Loan::Ordinary, 2, fees) << ' '
+                  << feeFor(Loan::Oversize, 1, fees) << '\n';
+    }
 }

@@ -129,6 +129,15 @@ add_dpc_lab(dpc_channel_lease_solution "DPC-21-dpc10-patterns-for-resource-manag
 add_dpc_lab(dpc_frame_batch_starter "DPC-22-dpc10-patterns-for-resource-management-supplemental-3/starter/main.cpp")
 add_dpc_lab(dpc_frame_batch_solution "DPC-22-dpc10-patterns-for-resource-management-supplemental-3/solution/main.cpp")
 
+add_dpc_lab(dpc_loan_fee_starter "DPC-23-dpc11-legacy-refactoring-lab-supplemental-2/starter/main.cpp")
+add_dpc_lab(dpc_loan_fee_solution "DPC-23-dpc11-legacy-refactoring-lab-supplemental-2/solution/main.cpp")
+add_dpc_lab(dpc_booking_snapshot_starter "DPC-24-dpc11-legacy-refactoring-lab-supplemental-3/starter/main.cpp")
+add_dpc_lab(dpc_booking_snapshot_solution "DPC-24-dpc11-legacy-refactoring-lab-supplemental-3/solution/main.cpp")
+add_dpc_lab(dpc_studio_plan_starter "DPC-25-dpc12-capstone-studio-supplemental-2/starter/main.cpp")
+add_dpc_lab(dpc_studio_plan_solution "DPC-25-dpc12-capstone-studio-supplemental-2/solution/main.cpp")
+add_dpc_lab(dpc_service_queue_starter "DPC-26-dpc12-capstone-studio-supplemental-3/starter/main.cpp")
+add_dpc_lab(dpc_service_queue_solution "DPC-26-dpc12-capstone-studio-supplemental-3/solution/main.cpp")
+
 include(CTest)
 if(BUILD_TESTING)
     add_dpc_lab(dpc_dashboard_family_check "tests/dashboard_family.cpp")
